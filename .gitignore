@@ -5,5 +5,4 @@ franklin.pub
 node_modules/
 Manifest.toml
 .vscode
-codes/
 .CondaPkg/

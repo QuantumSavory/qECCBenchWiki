@@ -1,0 +1,285 @@
++++
+title = "The Code Family `Toric`"
++++
+
+# The Code Family `Toric`
+
+The famous toric code, the first topological code. Terrible rate, ok-ish distance, awesome locality -- a tradeoff that will turn out to be fundamental to codes with only 2D connectivity.
+
+![summary of all evaluations that have been executed for this code family](./totalsummary.png)
+
+@@card
+@@card-header
+References
+@@
+@@card-body
+[ECC Zoo entry](https://errorcorrectionzoo.org/c/surface)~~~<br>~~~
+[QuantumClifford.jl docs](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.Toric)
+@@
+@@
+
+
+## A Few Examples from this Family
+
+@@small
+Click on the &#9654; marker to expand
+@@
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(3, 3)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(3, 3) instance of this code family](./Toric(3, 3).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(3, 3) instance of this code family](./Toric(3, 3)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(3, 3) instance of this code family](./Toric(3, 3)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(3, 3) instance of this code family](./Toric(3, 3)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(4, 4)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(4, 4) instance of this code family](./Toric(4, 4).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(4, 4) instance of this code family](./Toric(4, 4)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(4, 4) instance of this code family](./Toric(4, 4)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(4, 4) instance of this code family](./Toric(4, 4)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(6, 6)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(6, 6) instance of this code family](./Toric(6, 6).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(6, 6) instance of this code family](./Toric(6, 6)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(6, 6) instance of this code family](./Toric(6, 6)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(6, 6) instance of this code family](./Toric(6, 6)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(8, 8)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(8, 8) instance of this code family](./Toric(8, 8).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(8, 8) instance of this code family](./Toric(8, 8)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(8, 8) instance of this code family](./Toric(8, 8)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(8, 8) instance of this code family](./Toric(8, 8)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(10, 10)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(10, 10) instance of this code family](./Toric(10, 10).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(10, 10) instance of this code family](./Toric(10, 10)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(10, 10) instance of this code family](./Toric(10, 10)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(10, 10) instance of this code family](./Toric(10, 10)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+~~~
+<details>
+<summary>
+~~~
+### Toric(12, 12)
+~~~
+</summary>
+~~~
+
+#### Parity Check Tableau
+
+![the parity check tableau of the Toric(12, 12) instance of this code family](./Toric(12, 12).png)
+
+#### Encoding Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
+@@
+
+![the encoding circuit of the Toric(12, 12) instance of this code family](./Toric(12, 12)_encoding.png)
+
+#### Naive Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
+@@
+
+![the naive syndrome extraction circuit of the Toric(12, 12) instance of this code family](./Toric(12, 12)_encoding.png)
+
+#### Shor Syndrome Extraction Circuit
+
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+![the Shor syndrome extraction circuit of the Toric(12, 12) instance of this code family](./Toric(12, 12)_shor.png)
+
+~~~
+</details>
+~~~
+
+
+
+## Performance of Specific Decoders
+
+TODO
+
