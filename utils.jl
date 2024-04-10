@@ -7,14 +7,12 @@ using QuantumClifford.ECC
 
 include("code_metadata.jl")
 
-#typename(t) = string(t.name.name)
-
 function hfun_allcodes()
     io = IOBuffer()
     for (codeentry, metadata) in pairs(code_metadata)
         codeentry = nameof(codeentry)
-        decoders = nameof.(metadata[:decoders])
-        setups = nameof.(metadata[:setups])
+        decoders = unique(skipredundantsuffix.(typename.(metadata[:decoders])))
+        setups = skipredundantsuffix.(typename.(metadata[:setups]))
         description = Markdown.html(Markdown.parse(get(metadata, :description, "")))
         write(io, render(mt"""
         <div class="card">
