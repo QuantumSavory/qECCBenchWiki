@@ -4,7 +4,7 @@ module Hodgepodge
 
 using QuantumClifford
 using QuantumClifford.ECC
-import QuantumClifford.ECC: AbstractECC, parity_checks, parity_checks_x, parity_checks_z
+import QuantumClifford.ECC: AbstractECC, parity_checks, parity_checks_x, parity_checks_z, iscss
 
 abstract type HodgepodgeCode <: QuantumClifford.ECC.AbstractECC end
 
@@ -28,5 +28,6 @@ _nithincode() = CSS(load_nithin(joinpath((@__DIR__), "nithin/QC_dv4dc8_psto_29_1
 parity_checks(::NithinCode) = parity_checks(_nithincode())
 parity_checks_x(::NithinCode) = parity_checks_x(_nithincode())
 parity_checks_z(::NithinCode) = parity_checks_z(_nithincode())
+iscss(::NithinCode) = true
 
 end

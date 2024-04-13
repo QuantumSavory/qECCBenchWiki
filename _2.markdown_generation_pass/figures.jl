@@ -2,7 +2,8 @@ module CodeFigures
 
 using Makie, CairoMakie
 using Quantikz
-using QuantumClifford.ECC: TableDecoder, stabilizerplot_axis, parity_checks
+using QuantumClifford: stab_to_gf2
+using QuantumClifford.ECC: TableDecoder, stabilizerplot_axis, parity_checks, iscss, parity_checks_z, parity_checks_x
 
 include("../_0.helpers_and_metadata/helpers.jl")
 include("../_0.helpers_and_metadata/db_helpers.jl")
@@ -102,9 +103,40 @@ function prep_figures(code_metadata)
         # Plotting code instances
         for c in codes
             # Plotting stabilizer
-            f = Figure(size=(400,400))
-            sf = f[1,1]
-            stabilizerplot_axis(sf, parity_checks(c))
+            f = Figure(size=(600,300))
+            sf = f[1:2,1]
+            _,ax,p = stabilizerplot_axis(sf, parity_checks(c))
+            ax.title = "Parity Check Tableau\n(a.k.a. Stabilizer Generators)"
+            cm = Makie.cgrad([:lightgray,:black], 2, categorical = true)
+            hz, hx, tz, tx = if iscss(c)
+                parity_checks_z(c)[end:-1:1,:]', parity_checks_x(c)[end:-1:1,:]', "Z parity checks", "X parity checks"
+            else
+                h = stab_to_gf2(parity_checks(c))
+                h[:,end÷2+1:end][end:-1:1,:]', h[:,1:end÷2][end:-1:1,:]', "Z components", "X components"
+            end
+            axz = Axis(f[1,2], title=tz)
+            hmz = Makie.heatmap!(
+                axz,
+                collect(hz);
+                colorrange = (0, 1),
+                colormap=cm
+            )
+            axx = Axis(f[2,2], title=tx)
+            hmx = Makie.heatmap!(
+                axx,
+                collect(hx);
+                colorrange = (0, 1),
+                colormap=cm
+            )
+            linkxaxes!(axx, axz)
+            for ax in (axx, axz)
+                Makie.hidedecorations!(ax)
+                Makie.hidespines!(ax)
+                ax.aspect = Makie.DataAspect()
+            end
+            colsize!(f.layout, 1, Relative(0.6))
+            colsize!(f.layout, 2, Aspect(1, 1))
+            colgap!(f.layout, 1, Relative(0.15))
             save("codes/$(codetypename)/$(instancenameof(c)).png", f)
             # Plotting circuits
             continue # skip circuit plots
