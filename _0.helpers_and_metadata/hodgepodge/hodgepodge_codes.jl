@@ -24,9 +24,9 @@ end
 struct NithinCode <: HodgepodgeCode
 end
 
-nc() = CSS(load_nithin((@__DIR__)*"/nithin/QC_dv4dc8_psto_29_12_2_4_hx"), load_nithin((@__DIR__)*"/nithin/QC_dv4dc8_psto_29_12_2_4_hz"))
-parity_checks(::NithinCode) = parity_checks(nc())
-parity_checks_x(::NithinCode) = parity_checks_x(nc())
-parity_checks_z(::NithinCode) = parity_checks_z(nc())
+_nithincode() = CSS(load_nithin(joinpath((@__DIR__), "nithin/QC_dv4dc8_psto_29_12_2_4_hx")), load_nithin((@__DIR__)*"/nithin/QC_dv4dc8_psto_29_12_2_4_hz"))
+parity_checks(::NithinCode) = parity_checks(_nithincode())
+parity_checks_x(::NithinCode) = parity_checks_x(_nithincode())
+parity_checks_z(::NithinCode) = parity_checks_z(_nithincode())
 
 end

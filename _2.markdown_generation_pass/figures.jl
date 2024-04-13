@@ -1,3 +1,15 @@
+module CodeFigures
+
+using Makie, CairoMakie
+using Quantikz
+using QuantumClifford.ECC: TableDecoder, stabilizerplot_axis, parity_checks
+
+include("../_0.helpers_and_metadata/helpers.jl")
+include("../_0.helpers_and_metadata/db_helpers.jl")
+
+using .Helpers: logrange, instancenameof, skipredundantfix, typenameof
+using .DBHelpers: dbrow, dbnarray, dbrow!
+
 skipzeronan(xs) = (x for x in xs if x!=0 && !isnan(x))
 
 function make_decoder_figure(phys_errors, results;
@@ -10,7 +22,7 @@ function make_decoder_figure(phys_errors, results;
 )
     minlim = minimum(phys_errors)
     #minlim = min(minimum(phys_errors),minimum(skipzeronan(results)))
-    maxlim = min(1, max(maximum(phys_errors),maximum(skipzeronan(results))))
+    maxlim = min(1, max(maximum(Iterators.flatten((phys_errors,skipzeronan(results))))))
 
     fresults = copy(results)
     fresults[results.==0] .= NaN
@@ -62,4 +74,59 @@ function make_decoder_figure(phys_errors, results;
         Legend(f[7,4],ma,["X", "Z"], "Logical Error", framevisible = false, halign=:left, titlehalign=:left, valign=:top, nbanks=2)
     end
     f
+end
+
+function prep_figures(code_metadata)
+    for (codetype, metadata) in code_metadata
+        codetypename = typenameof(codetype)
+        @info "Plotting figures for $(codetypename) ..."
+        codes = [codetype(instance_args...) for instance_args in metadata[:family]]
+        decoders = metadata[:decoders]
+        setups = metadata[:setups]
+        errrange = metadata[:errrange]
+        e = logrange(errrange...)
+        r = dbnarray(codes, decoders, setups, e)
+
+        single_error = length(decoders)>1 || decoders==[TableDecoder]
+
+        # Plotting summary fig
+        f = make_decoder_figure(e, r;
+            title="$(codetypename)",
+            codelabels=instancenameof.(codes),
+            decoderlabels=skipredundantfix.(decoders),
+            setuplabels=skipredundantfix.(setups),
+            single_error
+        )
+        save("codes/$(codetypename)/totalsummary.png", f)
+
+        # Plotting code instances
+        for c in codes
+            # Plotting stabilizer
+            f = Figure(size=(400,400))
+            sf = f[1,1]
+            stabilizerplot_axis(sf, parity_checks(c))
+            save("codes/$(codetypename)/$(instancenameof(c)).png", f)
+            # Plotting circuits
+            continue # skip circuit plots
+            if nqubits(c) <= 15
+                try
+                    savecircuit(naive_encoding_circuit(c), "codes/$(codetypename)/$(c)_encoding.png")
+                catch
+                    @error "$(c) failed to plot `naive_encoding_circuit`"
+                end
+                try
+                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codetypename)/$(c)_naive_syndrome.png")
+                catch
+                    @error "$(c) failed to plot `naive_syndrome_circuit`"
+                end
+                try
+                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codetypename)/$(c)_naive_syndrome.png")
+                catch
+                    @error "$(c) failed to plot `shor_syndrome_circuit`"
+                end
+            end
+        end
+    end
+end
+
 end

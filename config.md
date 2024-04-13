@@ -17,7 +17,7 @@ Built at UMass Amherst with help from <a href="/contributors/">our outstanding u
 </small>
 """
 
-ignore = ["code_template.md"]
+ignore = ["_2.markdown_generation_pass/code_template.md"]
 
 prepath     = get(ENV, "PREVIEW_FRANKLIN_PREPATH", ".")
 website_url = get(ENV, "PREVIEW_FRANKLIN_WEBSITE_URL", "")
