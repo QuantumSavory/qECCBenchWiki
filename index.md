@@ -62,7 +62,7 @@
       @@
       @@col-md
         ~~~
-        <img src="./assets/friends/cqn-logo.png" style="background-color:black;">
+        <img src="./assets/friends/cqn-logo-white.png">
         ~~~
       @@
       @@col-md
