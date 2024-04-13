@@ -54,9 +54,9 @@ function dbrow!(code, decoder, setup, e, n, le)
 end
 
 function dbrow!(code, decoder, setup, e, n, lx, lz)
-    code = skipredundantfix(instancenameof(code))
-    decoder = skipredundantfix(decoder)
-    setup = skipredundantfix(setup)
+    code = skipredundantprefix(instancenameof(code))
+    decoder = skipredundantprefix(decoder)
+    setup = skipredundantprefix(setup)
     old = dbrow(code, decoder, setup, e)
     newn, newlx, newlz = if isnothing(old)
         n, lx, lz
