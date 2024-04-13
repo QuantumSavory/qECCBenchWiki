@@ -9,14 +9,14 @@ include("code_metadata.jl")
 
 function hfun_allcodes()
     io = IOBuffer()
-    for (codeentry, metadata) in pairs(code_metadata)
-        codeentry = nameof(codeentry)
-        decoders = unique(skipredundantsuffix.(typename.(metadata[:decoders])))
-        setups = skipredundantsuffix.(typename.(metadata[:setups]))
+    for (codetype, metadata) in pairs(code_metadata)
+        codetypename = typenameof(codetype)
+        decoders = unique(skipredundantsuffix.(typenameof.(metadata[:decoders])))
+        setups = skipredundantsuffix.(typenameof.(metadata[:setups]))
         description = Markdown.html(Markdown.parse(get(metadata, :description, "")))
         write(io, render(mt"""
         <div class="card">
-          <h5 class="card-header"><a href="../codes/{{{:codeentry}}}">{{:codeentry}}</a></h5>
+          <h5 class="card-header"><a href="../codes/{{{:codetypename}}}">{{:codetypename}}</a></h5>
           <div class="card-body">
             <p class="card-text">{{{:description}}}</p>
           </div>
@@ -27,7 +27,7 @@ function hfun_allcodes()
           </div>
         </div>
         <br>
-        """, (;codeentry, decoders, setups, description)))
+        """, (;codetypename, decoders, setups, description)))
         write(io, "\n")
     end
     return String(take!(io))

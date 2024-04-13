@@ -1,7 +1,7 @@
 isreusableandthreadsafe(_) = false
 isreusableandthreadsafe(::Type{TableDecoder}) = true
 
-goodnsamples(m) = Int(ceil(40/m))
+goodnsamples(m) = get(ENV,"ECCBENCHWIKI_QUICKCHECK", "")=="" ? Int(ceil(40/m)) : 10
 
 function evaluate_codes_decoders_setups(codes,decoders,setups;
     errrange=(eᵐⁱⁿ, eᵐᵃˣ, steps), # the default from globals defined in code_metadata.jl

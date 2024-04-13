@@ -35,30 +35,30 @@ include("code_evaluation.jl")
 #
 
 function run_evaluations(code_metadata; include=nothing)
-    for (codeentry, metadata) in code_metadata
-        codeentryname = nameof(codeentry)
-        !isnothing(include) && codeentry ∉ include && continue
-        codes = [codeentry(instance_args...) for instance_args in metadata[:family]]
+    for (codetype, metadata) in code_metadata
+        codetypename = nameof(codetype)
+        !isnothing(include) && codetype ∉ include && continue
+        codes = [codetype(instance_args...) for instance_args in metadata[:family]]
         decoders = metadata[:decoders]
         setups = metadata[:setups]
         errrange = metadata[:errrange]
-        println("Evaluating $(codeentryname) ...")
+        println("Evaluating $(codetypename) ...")
         e, n, r = evaluate_codes_decoders_setups(codes, decoders, setups; errrange)
     end
 end
 
 function prep_folders(code_metada)
-    for (codeentry, metadata) in code_metadata
-        codeentryname = nameof(codeentry)
-        isdir("codes/$codeentryname") || mkdir("codes/$codeentryname")
+    for (codetype, metadata) in code_metadata
+        codetypename = nameof(codetype)
+        isdir("codes/$codetypename") || mkdir("codes/$codetypename")
     end
 end
 
 function prep_figures(code_metada)
-    for (codeentry, metadata) in code_metadata
-        codeentryname = nameof(codeentry)
-        println("Plotting $(codeentryname) ...")
-        codes = [codeentry(instance_args...) for instance_args in metadata[:family]]
+    for (codetype, metadata) in code_metadata
+        codetypename = nameof(codetype)
+        println("Plotting $(codetypename) ...")
+        codes = [codetype(instance_args...) for instance_args in metadata[:family]]
         decoders = metadata[:decoders]
         setups = metadata[:setups]
         errrange = metadata[:errrange]
@@ -69,13 +69,13 @@ function prep_figures(code_metada)
 
         # Plotting summary fig
         f = make_decoder_figure(e, r;
-            title="$(codeentryname)",
+            title="$(codetypename)",
             codelabels=instancenameof.(codes),
             decoderlabels=skipredundantsuffix.(decoders),
             setuplabels=skipredundantsuffix.(setups),
             single_error
         )
-        save("codes/$(codeentryname)/totalsummary.png", f)
+        save("codes/$(codetypename)/totalsummary.png", f)
 
         # Plotting code instances
         for c in codes
@@ -83,22 +83,22 @@ function prep_figures(code_metada)
             f = Figure(size=(400,400))
             sf = f[1,1]
             stabilizerplot_axis(sf, parity_checks(c))
-            save("codes/$(codeentryname)/$(instancenameof(c)).png", f)
+            save("codes/$(codetypename)/$(instancenameof(c)).png", f)
             # Plotting circuits
             continue # skip circuit plots
             if nqubits(c) <= 15
                 try
-                    savecircuit(naive_encoding_circuit(c), "codes/$(codeentryname)/$(c)_encoding.png")
+                    savecircuit(naive_encoding_circuit(c), "codes/$(codetypename)/$(c)_encoding.png")
                 catch
                     @error "$(c) failed to plot `naive_encoding_circuit`"
                 end
                 try
-                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codeentryname)/$(c)_naive_syndrome.png")
+                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codetypename)/$(c)_naive_syndrome.png")
                 catch
                     @error "$(c) failed to plot `naive_syndrome_circuit`"
                 end
                 try
-                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codeentryname)/$(c)_naive_syndrome.png")
+                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codetypename)/$(c)_naive_syndrome.png")
                 catch
                     @error "$(c) failed to plot `shor_syndrome_circuit`"
                 end
@@ -108,9 +108,9 @@ function prep_figures(code_metada)
 end
 
 function prep_markdown(code_metada)
-    for (codeentry, metadata) in code_metadata
-        codeentryname = nameof(codeentry)
-        make_markdown_page(codeentryname, metadata)
+    for (codetype, metadata) in code_metadata
+        codetypename = nameof(codetype)
+        make_markdown_page(codetypename, metadata)
     end
 end
 

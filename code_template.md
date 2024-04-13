@@ -1,8 +1,8 @@
 +++
-title = "The Code Family `{{:codeentry}}`"
+title = "The Code Family `{{:codetypename}}`"
 +++
 
-# The Code Family `{{:codeentry}}`
+# The Code Family `{{:codetypename}}`
 
 {{:description}}
 
@@ -14,7 +14,7 @@ References
 @@
 @@card-body
 [ECC Zoo entry]({{{:ecczoo}}})~~~<br>~~~
-[QuantumClifford.jl docs](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.{{{:codeentry}}})
+[QuantumClifford.jl docs](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.{{{:codetypename}}})
 @@
 @@
 
@@ -31,14 +31,14 @@ Click on the &#9654; marker to expand
 <details>
 <summary>
 ~~~
-### {{:codeentry}}{{.}}
+### {{:codetypename}}{{.}}
 ~~~
 </summary>
 ~~~
 
 #### Parity Check Tableau
 
-![the parity check tableau of the {{:codeentry}}{{.}} instance of this code family](./{{:codeentry}}{{.}}.png)
+![the parity check tableau of the {{:codetypename}}{{.}} instance of this code family](./{{:codetypename}}{{.}}.png)
 
 #### Encoding Circuit
 
@@ -46,7 +46,7 @@ Click on the &#9654; marker to expand
 can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
 @@
 
-![the encoding circuit of the {{:codeentry}}{{.}} instance of this code family](./{{{:codeentry}}}{{{.}}}_encoding.png)
+![the encoding circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_encoding.png)
 
 #### Naive Syndrome Extraction Circuit
 
@@ -54,7 +54,7 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the {{:codeentry}}{{.}} instance of this code family](./{{{:codeentry}}}{{{.}}}_encoding.png)
+![the naive syndrome extraction circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_encoding.png)
 
 #### Shor Syndrome Extraction Circuit
 
@@ -62,7 +62,7 @@ can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantum
 can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
 @@
 
-![the Shor syndrome extraction circuit of the {{:codeentry}}{{.}} instance of this code family](./{{{:codeentry}}}{{{.}}}_shor.png)
+![the Shor syndrome extraction circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_shor.png)
 
 ~~~
 </details>

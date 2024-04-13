@@ -42,5 +42,5 @@ function Base.string(x::KWFun)
     return "$f(_;$(join(["$k=$v" for (k,v) in pairs(x.kwargs)], ", ")))"
 end
 
-typename(t) = nameof(t)
-typename(t::KWFun) = nameof(t.f)
+typenameof(t) = nameof(t)
+typenameof(t::KWFun) = nameof(t.f)
