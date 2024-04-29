@@ -10,7 +10,7 @@ Add the codes and decoders of interest to `_0.helpers_and_metadata/code_metadata
 
 ```
 julia> include("wiki_database_passes.jl")
-julia> run_evaluations(code_metadata)
+julia> run_evaluations(CodeMetadata.code_metadata)
 ```
 
 If you want to run only some codes, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
@@ -19,7 +19,7 @@ If you want to run only some codes, e.g. the code family `CodeType`, you can use
 
 ```
 julia> include("wiki_database_passes.jl")
-julia> prep_everything(code_metadata)
+julia> prep_everything(CodeMetadata.code_metadata)
 ```
 
 ## To generate the website for local viewing
