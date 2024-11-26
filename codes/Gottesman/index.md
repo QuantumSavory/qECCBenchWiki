@@ -47,21 +47,25 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Gottesman(3) instance of this code family](./Gottesman(3)_encoding.png)
 
+<!-- TODO: Make QASM download for naive encoding circuit -->
+
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Gottesman(3) instance of this code family](./Gottesman(3)_encoding.png)
+![the naive syndrome extraction circuit of the Gottesman(3) instance of this code family](./Gottesman(3)_naive_syndrome.png)
 
-#### Shor Syndrome Extraction Circuit
+<!-- TODO: Make QASM download for naive syndrome circuit -->
 
-@@small
-can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
-@@
+<!-- #### Shor Syndrome Extraction Circuit -->
 
-![the Shor syndrome extraction circuit of the Gottesman(3) instance of this code family](./Gottesman(3)_shor.png)
+<!-- @@small -->
+<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
+<!-- @@ -->
+
+<!-- TODO: Make QASM download for Shor syndrome circuit -->
 
 ~~~
 </details>
@@ -89,21 +93,25 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Gottesman(4) instance of this code family](./Gottesman(4)_encoding.png)
 
+<!-- TODO: Make QASM download for naive encoding circuit -->
+
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Gottesman(4) instance of this code family](./Gottesman(4)_encoding.png)
+![the naive syndrome extraction circuit of the Gottesman(4) instance of this code family](./Gottesman(4)_naive_syndrome.png)
 
-#### Shor Syndrome Extraction Circuit
+<!-- TODO: Make QASM download for naive syndrome circuit -->
 
-@@small
-can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
-@@
+<!-- #### Shor Syndrome Extraction Circuit -->
 
-![the Shor syndrome extraction circuit of the Gottesman(4) instance of this code family](./Gottesman(4)_shor.png)
+<!-- @@small -->
+<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
+<!-- @@ -->
+
+<!-- TODO: Make QASM download for Shor syndrome circuit -->
 
 ~~~
 </details>
@@ -131,21 +139,25 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Gottesman(5) instance of this code family](./Gottesman(5)_encoding.png)
 
+<!-- TODO: Make QASM download for naive encoding circuit -->
+
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Gottesman(5) instance of this code family](./Gottesman(5)_encoding.png)
+![the naive syndrome extraction circuit of the Gottesman(5) instance of this code family](./Gottesman(5)_naive_syndrome.png)
 
-#### Shor Syndrome Extraction Circuit
+<!-- TODO: Make QASM download for naive syndrome circuit -->
 
-@@small
-can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
-@@
+<!-- #### Shor Syndrome Extraction Circuit -->
 
-![the Shor syndrome extraction circuit of the Gottesman(5) instance of this code family](./Gottesman(5)_shor.png)
+<!-- @@small -->
+<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
+<!-- @@ -->
+
+<!-- TODO: Make QASM download for Shor syndrome circuit -->
 
 ~~~
 </details>
@@ -173,21 +185,25 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Gottesman(6) instance of this code family](./Gottesman(6)_encoding.png)
 
+<!-- TODO: Make QASM download for naive encoding circuit -->
+
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Gottesman(6) instance of this code family](./Gottesman(6)_encoding.png)
+![the naive syndrome extraction circuit of the Gottesman(6) instance of this code family](./Gottesman(6)_naive_syndrome.png)
 
-#### Shor Syndrome Extraction Circuit
+<!-- TODO: Make QASM download for naive syndrome circuit -->
 
-@@small
-can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
-@@
+<!-- #### Shor Syndrome Extraction Circuit -->
 
-![the Shor syndrome extraction circuit of the Gottesman(6) instance of this code family](./Gottesman(6)_shor.png)
+<!-- @@small -->
+<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
+<!-- @@ -->
+
+<!-- TODO: Make QASM download for Shor syndrome circuit -->
 
 ~~~
 </details>
@@ -198,4 +214,3 @@ can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantums
 ## Performance of Specific Decoders
 
 TODO
-

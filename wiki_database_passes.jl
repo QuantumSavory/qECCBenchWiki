@@ -1,6 +1,10 @@
+module QECCWikiGen
+
 using Logging
 using TerminalLoggers
 using ProgressLogging
+
+export run_evaluations, prep_everything, code_metadata
 
 global_logger(TerminalLogger(right_justify=120))
 
@@ -46,8 +50,10 @@ function prep_folders(code_metadata)
     end
 end
 
-function prep_everything(code_metada)
-    prep_folders(code_metada)
-    prep_figures(code_metada)
-    prep_markdown(code_metada)
+function prep_everything(code_metadata; replot=false)
+    prep_folders(code_metadata)
+    if replot prep_figures(code_metadata) end
+    prep_markdown(code_metadata)
+end
+
 end
