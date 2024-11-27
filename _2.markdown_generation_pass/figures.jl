@@ -144,18 +144,18 @@ function prep_figures(code_metadata)
             colsize!(f.layout, 2, Aspect(1, 1))
             colgap!(f.layout, 1, Relative(0.15))
             save("codes/$(codetypename)/$(instancenameof(c)).png", f)
-            # if code_n(c) <= 10
-            #     try
-            #         savecircuit(naive_encoding_circuit(parity_checks(c)), "codes/$(codetypename)/$(c)_encoding.png")
-            #     catch
-            #         @error "$(c) failed to plot `naive_encoding_circuit`"
-            #     end
-            #     try
-            #         savecircuit(naive_syndrome_circuit(parity_checks(c))[1], "codes/$(codetypename)/$(c)_naive_syndrome.png")
-            #     catch
-            #         @error "$(c) failed to plot `naive_syndrome_circuit`"
-            #     end
-            # end
+            if code_n(c) <= 10
+                try
+                    savecircuit(naive_encoding_circuit(parity_checks(c)), "codes/$(codetypename)/$(c)_encoding.png")
+                catch
+                    @error "$(c) failed to plot `naive_encoding_circuit`"
+                end
+                try
+                    savecircuit(naive_syndrome_circuit(parity_checks(c))[1], "codes/$(codetypename)/$(c)_naive_syndrome.png")
+                catch
+                    @error "$(c) failed to plot `naive_syndrome_circuit`"
+                end
+            end
         end
     end
 end
