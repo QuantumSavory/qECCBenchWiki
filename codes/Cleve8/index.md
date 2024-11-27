@@ -47,25 +47,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Cleve8() instance of this code family](./Cleve8()_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Cleve8() instance of this code family](./Cleve8()_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Cleve8() instance of this code family](./Cleve8()_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Cleve8() instance of this code family](./Cleve8()_shor.png)
 
 ~~~
 </details>
@@ -76,3 +72,4 @@ can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantum
 ## Performance of Specific Decoders
 
 TODO
+

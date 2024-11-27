@@ -47,25 +47,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(3, 3) instance of this code family](./Surface(3, 3)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(3, 3) instance of this code family](./Surface(3, 3)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(3, 3) instance of this code family](./Surface(3, 3)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(3, 3) instance of this code family](./Surface(3, 3)_shor.png)
 
 ~~~
 </details>
@@ -93,25 +89,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(4, 4) instance of this code family](./Surface(4, 4)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(4, 4) instance of this code family](./Surface(4, 4)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(4, 4) instance of this code family](./Surface(4, 4)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(4, 4) instance of this code family](./Surface(4, 4)_shor.png)
 
 ~~~
 </details>
@@ -139,25 +131,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(6, 6) instance of this code family](./Surface(6, 6)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(6, 6) instance of this code family](./Surface(6, 6)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(6, 6) instance of this code family](./Surface(6, 6)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(6, 6) instance of this code family](./Surface(6, 6)_shor.png)
 
 ~~~
 </details>
@@ -185,25 +173,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(8, 8) instance of this code family](./Surface(8, 8)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(8, 8) instance of this code family](./Surface(8, 8)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(8, 8) instance of this code family](./Surface(8, 8)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(8, 8) instance of this code family](./Surface(8, 8)_shor.png)
 
 ~~~
 </details>
@@ -231,25 +215,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(10, 10) instance of this code family](./Surface(10, 10)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(10, 10) instance of this code family](./Surface(10, 10)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(10, 10) instance of this code family](./Surface(10, 10)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(10, 10) instance of this code family](./Surface(10, 10)_shor.png)
 
 ~~~
 </details>
@@ -277,25 +257,21 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Surface(12, 12) instance of this code family](./Surface(12, 12)_encoding.png)
 
-<!-- TODO: Make QASM download for naive encoding circuit -->
-
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Surface(12, 12) instance of this code family](./Surface(12, 12)_naive_syndrome.png)
+![the naive syndrome extraction circuit of the Surface(12, 12) instance of this code family](./Surface(12, 12)_encoding.png)
 
-<!-- TODO: Make QASM download for naive syndrome circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
-
-<!-- TODO: Make QASM download for Shor syndrome circuit -->
+![the Shor syndrome extraction circuit of the Surface(12, 12) instance of this code family](./Surface(12, 12)_shor.png)
 
 ~~~
 </details>
@@ -306,3 +282,4 @@ can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantum
 ## Performance of Specific Decoders
 
 TODO
+
