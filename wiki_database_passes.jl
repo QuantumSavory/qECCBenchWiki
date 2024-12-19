@@ -1,5 +1,3 @@
-module QECCWikiGen
-
 using Logging
 using TerminalLoggers
 using ProgressLogging
@@ -50,10 +48,8 @@ function prep_folders(code_metadata)
     end
 end
 
-function prep_everything(code_metadata; replot=false)
+function prep_everything(code_metadata; plot=true, markdown=true)
     prep_folders(code_metadata)
-    if replot prep_figures(code_metadata) end
-    prep_markdown(code_metadata)
-end
-
+    plot && prep_figures(code_metadata)
+    markdown && prep_markdown(code_metadata)
 end
