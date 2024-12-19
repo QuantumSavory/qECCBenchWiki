@@ -47,13 +47,17 @@ can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantum
 
 ![the encoding circuit of the Shor9() instance of this code family](./Shor9()_encoding.png)
 
+<!-- TODO: Make QASM download for naive encoding circuit -->
+
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the Shor9() instance of this code family](./Shor9()_encoding.png)
+![the naive syndrome extraction circuit of the Shor9() instance of this code family](./Shor9()_naive_syndrome.png)
+
+<!-- TODO: Make QASM download for naive syndrome circuit -->
 
 #### Shor Syndrome Extraction Circuit
 
@@ -61,7 +65,10 @@ can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantum
 can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
 @@
 
-![the Shor syndrome extraction circuit of the Shor9() instance of this code family](./Shor9()_shor.png)
+<!-- ![the Shor syndrome extraction circuit of the Shor9() instance of this code family](./Shor9()_shor_syndrome.png) -->
+<!-- TODO: make the above work reliably and uncomment it -->
+
+<!-- TODO: Make QASM download for Shor syndrome circuit -->
 
 ~~~
 </details>
@@ -72,4 +79,3 @@ can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantums
 ## Performance of Specific Decoders
 
 TODO
-
