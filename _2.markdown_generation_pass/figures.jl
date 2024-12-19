@@ -84,7 +84,7 @@ function make_decoder_figure(phys_errors, results;
 end
 
 function prep_figures(code_metadata)
-    for (codetype, metadata) in code_metadata
+    Threads.@threads :greedy for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
         @info "Plotting figures for $(codetypename) ..."
         codes = [codetype(instance_args...) for instance_args in metadata[:family]]
@@ -147,18 +147,18 @@ function prep_figures(code_metadata)
             # Plotting circuits
             if code_n(c) <= 10
                 try
-                    savecircuit(naive_encoding_circuit(c), "codes/$(codetypename)/$(c)_encoding.png")
+                    savecircuit(naive_encoding_circuit(c), "codes/$(codetypename)/$(instancenameof(c))_encoding.png")
                 catch
                     @error "$(c) failed to plot `naive_encoding_circuit`"
                 end
                 try
-                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codetypename)/$(c)_naive_syndrome.png")
+                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codetypename)/$(instancenameof(c))_naive_syndrome.png")
                 catch
                     @error "$(c) failed to plot `naive_syndrome_circuit`"
                 end
                 try
                     error("shor syndrome circuit plotting is problematic, fix it") #TODO
-                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codetypename)/$(c)_shor_syndrome.png")
+                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codetypename)/$(instancenameof(c))_shor_syndrome.png")
                 catch
                     @error "$(c) failed to plot `shor_syndrome_circuit`"
                 end
