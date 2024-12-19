@@ -60,11 +60,14 @@ can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantum
 
 <!-- TODO: Make QASM download for naive syndrome circuit -->
 
-<!-- #### Shor Syndrome Extraction Circuit -->
+#### Shor Syndrome Extraction Circuit
 
-<!-- @@small -->
-<!-- can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit) -->
-<!-- @@ -->
+@@small
+can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
+@@
+
+<!-- ![the Shor syndrome extraction circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_shor_syndrome.png) -->
+<!-- TODO: make the above work reliably and uncomment it -->
 
 <!-- TODO: Make QASM download for Shor syndrome circuit -->
 
