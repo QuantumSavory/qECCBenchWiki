@@ -2,6 +2,7 @@ module CodeMetadata
 
 using QuantumClifford
 using QuantumClifford.ECC
+import Hecke
 import PyQDecoders
 import LDPCDecoders
 
@@ -85,6 +86,14 @@ const code_metadata = Dict(
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
         :description => "My friend Nithin made this one. It is here as an example placeholder as we built out the page for this code family.",
         :redundantrows => true,
+    ),
+    haah_cubic_codes => Dict(
+        :family => [([0, 15, 20, 28, 66], [0, 58, 59, 100, 121], 6)],
+        :decoders => [TableDecoder],
+        :setups => [CommutationCheckECCSetup],
+        :ecczoo => "https://errorcorrectionzoo.org/c/haah_cubic",
+        :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
+        :description => "The Haah cubic code to protect against simultaneous independent Pauli errors on different sites."
     ),
 )
 

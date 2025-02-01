@@ -99,7 +99,7 @@ function prep_figures(code_metadata)
         # Plotting benchmarking summary fig
         f = make_decoder_figure(e, r;
             title="$(codetypename)",
-            codelabels=instancenameof.(codes),
+            codelabels=first(instancenameof.(codes),20),
             decoderlabels=skipredundantfix.(decoders),
             setuplabels=skipredundantfix.(setups),
             single_error
