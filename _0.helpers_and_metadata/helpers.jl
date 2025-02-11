@@ -19,7 +19,7 @@ function instancenameof(x)
         end
     end
     str *= ")"
-    return str
+    return str[begin : min(end,150)] # TERRIBLY UGLY HACK TODO - fix instancenameof
 end
 
 function skipredundantprefix(x)
