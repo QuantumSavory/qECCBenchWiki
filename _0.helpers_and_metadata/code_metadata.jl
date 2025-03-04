@@ -11,6 +11,13 @@ const eᵐⁱⁿ = 0.00001
 const eᵐᵃˣ = 0.3
 const steps = 20
 
+ # Structures from  lin2024quantum #
+
+C₂₇ = ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27)
+C₃₀ = ([0 , 10,  6, 13], [0 , 25, 16, 12], 30)
+C₃₅ = ([0 , 15, 16, 18], [0 ,  1, 24, 27], 35)
+C₃₆ = ([0 ,  9, 28, 31], [0 ,  1, 21, 34], 36)
+C₃₆K₁₀ = ([0 ,  9, 28, 13], [0 ,  1,  3, 22], 36)
 
 # Constants used for the 2BGA codes #
 # m = 4
@@ -25,13 +32,11 @@ x, s = gens(GA)
 A2 = 1 + x
 B2 = 1 + x^3 + s + x^4 + x^2 + s*x
 
-
 # m = 8
 GA = group_algebra(GF(2), abelian_group([8,2]))
 x, s = gens(GA)
 A3 = 1 + x^6
 B3 = 1 + s*x^7 + s*x^4 + x^6 + s*x^5 + s*x^2
-
 
 # m = 10
 GA = group_algebra(GF(2), abelian_group([10,2]))
@@ -39,19 +44,60 @@ x, s = gens(GA)
 A4 = 1 + x
 B4 = 1 + x^5 + x^6 + s*x^6 + x^7 + s*x^3
 
-
 # m = 12
 GA = group_algebra(GF(2), abelian_group([12,2]))
 x, s = gens(GA)
 A5 = 1 + s*x^10
 B5 = 1 + x^3 + s*x^6 + x^4 + x^7 + x^8
 
-
 # m = 14
 GA = group_algebra(GF(2), abelian_group([14,2]))
 x, s = gens(GA)
 A6 = 1 + x^8
 B6 = 1 + x^7 + s + x^8 + x^9 + s*x^4
+
+# Working variables for the bivariate_bicycle_group
+# [[72, 12, 6]]
+l=6; m=6
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C1 = x^3 + y + y^2
+D1 = y^3 + x + x^2
+
+# [[196, 12, 8]]
+l=14; m=7
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C2 = x^6 + y^5 + y^6
+D2 = 1   + x^4 + x^13
+
+# [[108, 8, 10]]
+l=9; m=6
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C3 = x^3 + y + y^2
+D3 = y^3 + x + x^2
+
+# [[288, 12, 12]]
+l=12; m=12
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C4 = x^3 + y^2 + y^7
+D4 = y^3 + x   + x^2
+
+# [[360, 12, ≤ 24]]
+l=30; m=6
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C5 = x^9 + y    + y^2
+D5 = y^3 + x^25 + x^26
+
+# [[756, 16, ≤ 34]]
+l=21; m=18
+GA = group_algebra(GF(2), abelian_group([l, m]))
+x, y = gens(GA)
+C6 = x^3 + y^10 + y^17
+D6 = y^5 + x^3  + x^19
 
 
 
@@ -103,7 +149,7 @@ const code_metadata = Dict(
     ),
     Toric => Dict(
         :family => [(3,3), (4,4), (6,6), (8,8), (10,10), (12,12)],
-        :decoders => [TableDecoder],
+        :decoders => [TableDecoder, PyMatchingDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/surface",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
@@ -111,7 +157,7 @@ const code_metadata = Dict(
     ),
     Surface => Dict(
         :family => [(3,3), (4,4), (6,6), (8,8), (10,10), (12,12)],
-        :decoders => [TableDecoder],
+        :decoders => [TableDecoder, PyMatchingDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/surface",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
@@ -121,8 +167,11 @@ const code_metadata = Dict(
         :family => [()],
         :decoders => [TableDecoder,
                       BeliefPropDecoder,
-                      BitFlipDecoder
-        ],
+                      BitFlipDecoder,
+                      Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:zeroorder)),
+                      Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:exhaustive, osdorder=5)),
+                      Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:combinationsweep, osdorder=10)),
+                    ],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
@@ -132,27 +181,25 @@ const code_metadata = Dict(
     # Put in the 2 block group-algebra codes and generalized_bicycle_codes #
     # Families are from the test files for the individual codes #
     generalized_bicycle_codes => Dict(
-        :family => [([0 , 15, 16, 18], [0 ,  1, 24, 27], 35), 
-                    ([0 , 15, 16, 18], [0 ,  1, 24, 27], 35), 
-                    ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27), 
-                    ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27), 
-                    ([0 , 10,  6, 13], [0 , 25, 16, 12], 30), 
-                    ([0 , 10,  6, 13], [0 , 25, 16, 12], 30)],
-        :decoders => [BitFlipDecoder, BeliefPropDecoder],
+        :family => [C₂₇, C₃₀, C₃₅, C₃₆, C₃₆K₁₀],  # Subscripts correspond to the structures of the GB codes in table one [lin2024quantum](@cite) # Note K₁₀ was added because of repeated C₃₆ # 
+        :decoders => [BitFlipDecoder, PyBeliefPropDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/generalized_bicycle",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. This ensures the stabilizer conditions required for quantum error correction. The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ)"
+        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ)"
     ),
 
     two_block_group_algebra_codes => Dict(
-        :family => [(A1, B1), (A2, B2), (A3, B3), (A4, B4), (A5, B5), (A6, B6)],
-        :decoders => [BitFlipDecoder, BeliefPropDecoder],
+        :family => [(A1, B1), (A2, B2), (A3, B3), (A4, B4), (A5, B5), (A6, B6),  #TODO weed out the poorer 2BGA codes from Table 2 (seeming like the higher order ones fail more often) #
+                    (C1, D1), (C2, D2), (C3, D3), (C4, D4), (C5, D5), (C6, D6)], #TODO the (A,B) cluster goes to the 2BGA group and the (C,D) cluster goes to the bivariate group need some way to distinguish those two
+        :decoders => [BitFlipDecoder, PyBeliefPropDecoder, PyBeliefPropOSDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The two-block group algebra (2BGA) codes extend the generalized bicycle (GB) codes by replacing the cyclic group with a general finite group, which can be non-abelian. This generalization allows for a richer structure and potentially improved error-correcting properties. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
+        :description => "The two-block group algebra (2BGA) codes extend the generalized bicycle (GB) codes by replacing the cyclic group with a general finite group, which can be non-abelian. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
     )
+
+
 
     
 )
