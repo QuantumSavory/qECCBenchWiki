@@ -11,7 +11,7 @@ const eᵐⁱⁿ = 0.00001
 const eᵐᵃˣ = 0.3
 const steps = 20
 
- # Structures from  lin2024quantum #
+# Structures from  lin2024quantum #
 
 C₂₇ = ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27)
 C₃₀ = ([0 , 10,  6, 13], [0 , 25, 16, 12], 30)
@@ -171,7 +171,7 @@ const code_metadata = Dict(
                       Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:zeroorder)),
                       Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:exhaustive, osdorder=5)),
                       Helpers.KWFun(PyBeliefPropOSDecoder, (;bpmethod=:productsum, osdmethod=:combinationsweep, osdorder=10)),
-                    ],
+        ],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
@@ -180,7 +180,6 @@ const code_metadata = Dict(
     ),
     # Put in the 2 block group-algebra codes and generalized_bicycle_codes #
     # Families are from the test files for the individual codes #
-
     generalized_bicycle_codes => Dict(
         :family => [C₂₇, C₃₀, C₃₅, C₃₆, C₃₆K₁₀],  # Subscripts correspond to the structures of the GB codes in table one [lin2024quantum](@cite) # Note K₁₀ was added because of repeated C₃₆ # 
         :decoders => [BitFlipDecoder, PyBeliefPropDecoder],
@@ -189,10 +188,10 @@ const code_metadata = Dict(
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
         :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ)"
     ),
-    
+
     two_block_group_algebra_codes => Dict(
-        :family => [(A1, B1), (A2, B2), (A3, B3), (A4, B4), (A5, B5), (A6, B6), #TODO add a way to distuingish these from each other, maybe add m number to variable names #
-                    (A₇₂, B₇₂), (A₁₉₆, B₁₉₆), (A₁₀₈, B₁₀₈), (A₂₈₈, B₂₈₈), (A₃₆₀, B₃₆₀), (A₇₅₆, B₇₅₆)], #TODO the (A,B) cluster goes to the 2BGA group and the other cluster goes to the bivariate group need some way to distinguish those two # 3-5-25: added ways to distinguish the different codes with subscripts
+        :family => [(A1, B1), (A2, B2), (A3, B3), (A4, B4), (A5, B5), (A6, B6),  #TODO add some sort of naming convention to this family other than the same thing that the bivariate group has #
+                    (A₇₂, B₇₂), (A₁₉₆, B₁₉₆), (A₂₈₈, B₂₈₈), (A₁₀₈, B₁₀₈), (A₃₆₀, B₃₆₀), (A₇₅₆, B₇₅₆)], #TODO the (A,B) cluster goes to the 2BGA group and the other cluster goes to the bivariate group need some way to distinguish those two
         :decoders => [BitFlipDecoder, PyBeliefPropDecoder, PyBeliefPropOSDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
