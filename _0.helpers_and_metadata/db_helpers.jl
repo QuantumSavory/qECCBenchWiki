@@ -3,9 +3,7 @@ module DBHelpers
 using SQLite
 using DBInterface
 
-include("../_0.helpers_and_metadata/helpers.jl")
-
-using .Helpers: logrange, instancenameof, skipredundantprefix, typenameof
+using ..Helpers: logrange, instancenameof, skipredundantprefix, typenameof
 
 const CONN = DBInterface.connect(SQLite.DB, "codes/results.sqlite")
 SQLite.busy_timeout(CONN, 100)

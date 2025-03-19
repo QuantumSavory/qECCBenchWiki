@@ -5,20 +5,16 @@ using Quantikz
 using QuantumClifford: stab_to_gf2, stabilizerplot_axis
 using QuantumClifford.ECC: TableDecoder, parity_checks, iscss, parity_checks_z, parity_checks_x, code_n, naive_encoding_circuit, naive_syndrome_circuit, shor_syndrome_circuit
 
-
-include("../_0.helpers_and_metadata/helpers.jl")
-include("../_0.helpers_and_metadata/db_helpers.jl")
-
-using .Helpers: logrange, instancenameof, skipredundantfix, typenameof
-using .DBHelpers: dbrow, dbnarray, dbrow!
+using ..Helpers: logrange, instancenameof, skipredundantfix, typenameof, CircBuffer
+using ..DBHelpers: dbrow, dbnarray, dbrow!
 
 skipzeronan(xs) = (x for x in xs if x!=0 && !isnan(x))
 
 function make_decoder_figure(phys_errors, results;
     title="",
-    colors=Makie.wong_colors(),
-    linestyles=[:solid, :dash, :dot, :dashdot, :dashdotdot, Linestyle([0.5, 1.0, 1.5, 2.5])],
-    markers=['●', '■', '▲', '▼', '◆', '★'],
+    colors=CircBuffer(Makie.wong_colors()),
+    linestyles=CircBuffer([:solid, :dash, :dot, :dashdot, :dashdotdot, Linestyle([0.5, 1.0, 1.5, 2.5])]),
+    markers=CircBuffer(['●', '■', '▲', '▼', '◆', '★']),
     single_error=false,
     codelabels=[], decoderlabels=[], setuplabels=[],
 )

@@ -1,7 +1,6 @@
 module CodeMarkdown
 
-include("../_0.helpers_and_metadata/helpers.jl")
-using .Helpers: typenameof
+using ..Helpers: typenameof
 using Mustache
 
 function make_markdown_page(codetypename, metadata)
