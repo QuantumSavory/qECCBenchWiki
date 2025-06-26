@@ -2,8 +2,8 @@
 
 
 
-PutAGoodNameHereAboutGenBicCodes = PrettyCodeFamilyWrapper(
-    :PutAGoodNameHere,
+GeneralizedBicycle = PrettyCodeFamilyWrapper(
+    :GeneralizedBicycle,
     splat(generalized_bicycle_codes),
     Dict(
         :C₂₇ => ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27),
@@ -95,8 +95,8 @@ x, y = gens(GA)
 A₇₅₆ = x^3 + y^10 + y^17
 B₇₅₆ = y^5 + x^3  + x^19
 
-PutAGoodNameHereAbout2bga = PrettyCodeFamilyWrapper(
-    :PutAGoodNameHereAbout2bga,
+TwoBlockGroupAlgebra = PrettyCodeFamilyWrapper(
+    :TwoBlockGroupAlgebra,
     two_block_group_algebra_codes,
     Dict(
         :A1 => A1,
