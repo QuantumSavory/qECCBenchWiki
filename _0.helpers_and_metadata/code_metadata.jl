@@ -13,7 +13,7 @@ const steps = 20
 
 include("hodgepodge/hodgepodge_codes.jl")
 
-using ..Helpers: Helpers, logrange, PrettyCodeFamilyWrapper
+using ..Helpers: Helpers, logrange, codelink, PrettyCodeFamilyWrapper
 
 include("code_wrappers.jl")
 
@@ -108,7 +108,7 @@ const code_metadata = Dict(
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The two-block group algebra (2BGA) codes extend the generalized bicycle (GB) codes by replacing the cyclic group with a general finite group, which can be non-abelian. "
+        :description => "The two-block group algebra (2BGA) codes extend the $(codelink(GeneralizedBicycle, "generalized bicycle (GB) codes")) by replacing the cyclic group with a general finite group, which can be non-abelian. "
             * "The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
     )
 

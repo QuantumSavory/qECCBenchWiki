@@ -129,4 +129,7 @@ function QuantumClifford.ECC.code_n(c::PrettyCodeWrapper)
     QuantumClifford.ECC.code_n(c.code_cache)
 end
 
+codelink(code_name::Symbol, text=code_name) = "[$text](/codes/$code_name)"
+codelink(code_type, text=typenameof(code_type)) = codelink(typenameof(code_type), text)
+
 end
