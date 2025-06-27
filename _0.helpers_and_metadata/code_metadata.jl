@@ -97,7 +97,8 @@ const code_metadata = Dict(
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/generalized_bicycle",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ)"
+        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. " 
+            * "The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ).  See Table I in [Lin and Pryadko (2023)](https://doi.org/10.48550/arXiv.2306.16400) for the subscripts."
     ),
 
     TwoBlockGroupAlgebra => Dict(
@@ -107,7 +108,8 @@ const code_metadata = Dict(
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The two-block group algebra (2BGA) codes extend the generalized bicycle (GB) codes by replacing the cyclic group with a general finite group, which can be non-abelian. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
+        :description => "The two-block group algebra (2BGA) codes extend the generalized bicycle (GB) codes by replacing the cyclic group with a general finite group, which can be non-abelian. "
+            * "The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
     )
 
 )
