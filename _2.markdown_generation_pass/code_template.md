@@ -4,7 +4,7 @@ title = "The Code Family `{{:codetypename}}`"
 
 # The Code Family `{{:codetypename}}`
 
-{{:description}}
+{{{:description}}}
 
 ![summary of all evaluations that have been executed for this code family](./totalsummary.png)
 
