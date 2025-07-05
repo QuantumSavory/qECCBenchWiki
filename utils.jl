@@ -3,9 +3,10 @@ using Glob
 using Mustache
 using Markdown
 
+include("_0.helpers_and_metadata/helpers.jl")
 include("_0.helpers_and_metadata/code_metadata.jl")
 
-using .CodeMetadata.Helpers: typenameof, skipredundantfix # TODO weird namespacing issue -- method resolution gets confused if I go straight for using .Helpers
+using .Helpers: typenameof, skipredundantfix
 
 function hfun_allcodes()
     io = IOBuffer()

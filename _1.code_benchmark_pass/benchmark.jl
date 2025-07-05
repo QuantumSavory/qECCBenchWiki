@@ -18,11 +18,8 @@ end
 
 using ProgressLogging: @withprogress, @logprogress
 
-include("../_0.helpers_and_metadata/helpers.jl")
-include("../_0.helpers_and_metadata/db_helpers.jl")
-
-using .Helpers: logrange, instancenameof, skipredundantfix, typenameof
-using .DBHelpers: dbrow, dbnarray, dbrow!
+using ..Helpers: logrange, instancenameof, skipredundantfix, typenameof, choppad
+using ..DBHelpers: dbrow, dbnarray, dbrow!
 
 isreusableandthreadsafe(_) = false
 isreusableandthreadsafe(::Type{TableDecoder}) = true
@@ -53,7 +50,7 @@ function evaluate_codes_decoders_setups(codes,decoders,setups;
                 #Threads.@spawn begin
                     #@show (c, d, s, Threads.threadid())
                     done_samples = 0
-                    @withprogress name="$(rpad(cname,15))|$(rpad(dname[1:min(20,end)],20))|$(rpad(sname,20))" for iᵉ in reverse(eachindex(errors)) # reverse to get the smaller tasks first, to populate the progress bar
+                    @withprogress name="$(choppad(cname,20))│$(choppad(dname,20))│$(choppad(sname,20))" for iᵉ in reverse(eachindex(errors)) # reverse to get the smaller tasks first, to populate the progress bar
                         e = errors[iᵉ]
                         samples = goodnsamples(e)
                         r = sup(warn) do # TODO this would be much better and cleaner if we solve https://github.com/QuantumSavory/QuantumClifford.jl/issues/261

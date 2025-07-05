@@ -41,3 +41,7 @@ This is a Franklin.jl static website, together with the following extra passes f
 - `wiki_database_passes.jl` - all of the functionality necessary for running the aforementioned capabilities
 - `codes` - where the generated static website sources are kept
 - `database` - where the database of benchmarks is stored (in `sqlite` as master format, and a few other formats for convenient downloading)
+
+## ENV variables
+
+- if `ENV["ECCBENCHWIKI_QUICKCHECK"]!=""` we will run very few samples per code, useful to check for overall correctness
