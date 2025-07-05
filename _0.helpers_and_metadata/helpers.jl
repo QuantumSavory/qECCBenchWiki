@@ -18,6 +18,8 @@ function instancenameof(x)
             end
         end
     end
+    # Bad fix to prevent ENAMETOOLONG on LPCodes
+    str = first(str,20)
     str *= ")"
     return str
 end
