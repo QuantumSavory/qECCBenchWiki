@@ -1,7 +1,5 @@
 # Structures from lin2024quantum for use with generalized_bicycle_codes
 
-
-
 GeneralizedBicycle = PrettyCodeFamilyWrapper(
     :GeneralizedBicycle,
     splat(generalized_bicycle_codes),

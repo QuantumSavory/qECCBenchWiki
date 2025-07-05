@@ -4,6 +4,8 @@ using QuantumClifford
 using QuantumClifford.ECC
 import PyQDecoders
 import LDPCDecoders
+
+ENV["HECKE_PRINT_BANNER"] = "false"
 import Hecke
 using Hecke: group_algebra, GF, abelian_group, gens
 
@@ -89,18 +91,14 @@ const code_metadata = Dict(
         :description => "My friend Nithin made this one. It is here as an example placeholder as we built out the page for this code family.",
         :redundantrows => true,
     ),
-    # Put in the 2 block group-algebra codes and generalized_bicycle_codes #
-    # Families are from the test files for the individual codes #
     GeneralizedBicycle => Dict(
         :family => [(:C₂₇,), (:C₃₀,), (:C₃₅,), (:C₃₆,), (:C₃₆K₁₀,)],  # Subscripts correspond to the structures of the GB codes in table one [lin2024quantum](@cite) # Note K₁₀ was added because of repeated C₃₆ #
         :decoders => [BitFlipDecoder, PyBeliefPropDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/generalized_bicycle",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. " 
-            * "The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ).  See Table I in [Lin and Pryadko (2023)](https://doi.org/10.48550/arXiv.2306.16400) for the subscripts."
+        :description => "The generalized bicycle codes (GBCs) extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB + BA = 0. The code is defined using the generator matrices: G_X = (A, B), G_Z = (Bᵀ, Aᵀ).  See Table I in [Lin and Pryadko (2023)](https://doi.org/10.48550/arXiv.2306.16400) for the subscripts."
     ),
-
     TwoBlockGroupAlgebra => Dict(
         :family => [(:A1, :B1), (:A2, :B2), (:A3, :B3), (:A4, :B4), (:A5, :B5), (:A6, :B6),  #TODO add some sort of naming convention to this family other than the same thing that the bivariate group has #
                     (:A₇₂, :B₇₂), (:A₁₉₆, :B₁₉₆), (:A₂₈₈, :B₂₈₈), (:A₁₀₈, :B₁₀₈), (:A₃₆₀, :B₃₆₀), (:A₇₅₆, :B₇₅₆)], #TODO the (A,B) cluster goes to the 2BGA group and the other cluster goes to the bivariate group need some way to distinguish those two
@@ -108,10 +106,8 @@ const code_metadata = Dict(
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
-        :description => "The two-block group algebra (2BGA) codes extend the $(codelink(GeneralizedBicycle, "generalized bicycle (GB) codes")) by replacing the cyclic group with a general finite group, which can be non-abelian. "
-            * "The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
+        :description => "The two-block group algebra (2BGA) codes extend the $(codelink(GeneralizedBicycle, "generalized bicycle (GB) codes")) by replacing the cyclic group with a general finite group, which can be non-abelian. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
     )
-
 )
 
 end

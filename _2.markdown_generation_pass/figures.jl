@@ -3,7 +3,7 @@ module CodeFigures
 using Makie, CairoMakie
 using Quantikz
 using QuantumClifford: stab_to_gf2, stabilizerplot_axis
-using QuantumClifford.ECC: TableDecoder, parity_checks, iscss, parity_checks_z, parity_checks_x, code_n, naive_encoding_circuit, naive_syndrome_circuit, shor_syndrome_circuit
+using QuantumClifford.ECC: TableDecoder, parity_checks, iscss, parity_matrix_z, parity_matrix_x, code_n, naive_encoding_circuit, naive_syndrome_circuit, shor_syndrome_circuit
 
 using ..Helpers: logrange, instancenameof, skipredundantfix, typenameof, CircBuffer
 using ..DBHelpers: dbrow, dbnarray, dbrow!
@@ -81,7 +81,8 @@ function make_decoder_figure(phys_errors, results;
 end
 
 function prep_figures(code_metadata)
-    Threads.@threads :greedy for (codetype, metadata) in code_metadata
+    #Threads.@threads :greedy for (codetype, metadata) in code_metadata
+    for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
         @info "Plotting figures for $(codetypename) ..."
         codes = [codetype(instance_args...) for instance_args in metadata[:family]]
@@ -112,7 +113,7 @@ function prep_figures(code_metadata)
             ax.title = "Parity Check Tableau\n(a.k.a. Stabilizer Generators)"
             cm = Makie.cgrad([:lightgray,:black], 2, categorical = true)
             hz, hx, tz, tx = if iscss(c)
-                parity_checks_z(c)[end:-1:1,:]', parity_checks_x(c)[end:-1:1,:]', "Z parity checks", "X parity checks"
+                parity_matrix_z(c)[end:-1:1,:]', parity_matrix_x(c)[end:-1:1,:]', "Z parity checks", "X parity checks"
             else
                 h = stab_to_gf2(parity_checks(c))
                 h[:,end÷2+1:end][end:-1:1,:]', h[:,1:end÷2][end:-1:1,:]', "Z components", "X components"

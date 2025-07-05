@@ -107,14 +107,15 @@ instancenameof(c::PrettyCodeWrapper) = "$(c.code_family.code_name)($(c.code_args
 
 import QuantumClifford
 import QuantumClifford.ECC
+import QECCore
 function QuantumClifford.ECC.parity_checks(c::PrettyCodeWrapper)
     QuantumClifford.ECC.parity_checks(c.code_cache)
 end
-function QuantumClifford.ECC.parity_checks_x(c::PrettyCodeWrapper)
-    QuantumClifford.ECC.parity_checks_x(c.code_cache)
+function QuantumClifford.ECC.parity_matrix_x(c::PrettyCodeWrapper)
+    QuantumClifford.ECC.parity_matrix_x(c.code_cache)
 end
-function QuantumClifford.ECC.parity_checks_z(c::PrettyCodeWrapper)
-    QuantumClifford.ECC.parity_checks_z(c.code_cache)
+function QuantumClifford.ECC.parity_matrix_z(c::PrettyCodeWrapper)
+    QuantumClifford.ECC.parity_matrix_z(c.code_cache)
 end
 function QuantumClifford.ECC.faults_matrix(c::PrettyCodeWrapper)
     QuantumClifford.ECC.faults_matrix(c.code_cache)
