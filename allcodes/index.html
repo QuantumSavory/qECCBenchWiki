@@ -107,13 +107,13 @@
 <div class="franklin-content">
 <h1 id="all_codes_available_in_this_benchmark_database"><a href="#all_codes_available_in_this_benchmark_database" class="header-anchor">All Codes Available in this Benchmark Database</a></h1>
 <div class="card">
-  <h5 class="card-header"><a href="../codes/Perfect5">Perfect5</a></h5>
+  <h5 class="card-header"><a href="../codes/TwoBlockGroupAlgebra">TwoBlockGroupAlgebra</a></h5>
   <div class="card-body">
-    <p class="card-text"><p>One of the earliest proof-of-concept error correcting codes. The smallest code that can protect against any single-qubit error. Not a CSS code.</p>
+    <p class="card-text"><p>The two-block group algebra &#40;2BGA&#41; codes extend the <a href="/./codes/GeneralizedBicycle">generalized bicycle &#40;GB&#41; codes</a> by replacing the cyclic group with a general finite group, which can be non-abelian. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H<em>X &#61; &#40;A, B&#41;, H</em>Z^T &#61; &#91;B; -A&#93; where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition.</p>
 </p>
   </div>
   <div class="card-footer text-muted">
-   <span class="badge badge-dark">Table</span> 
+   <span class="badge badge-dark">BitFlip</span>  <span class="badge badge-dark">PyBeliefProp</span>  <span class="badge badge-dark">PyBeliefPropOS</span> 
   <br>
    <span class="badge badge-light">CommutationCheck</span> 
   </div>
@@ -121,13 +121,13 @@
 <br>
 
 <div class="card">
-  <h5 class="card-header"><a href="../codes/Toric">Toric</a></h5>
+  <h5 class="card-header"><a href="../codes/NithinCode">NithinCode</a></h5>
   <div class="card-body">
-    <p class="card-text"><p>The famous toric code, the first topological code. Terrible rate, ok-ish distance, awesome locality – a tradeoff that will turn out to be fundamental to codes with only 2D connectivity.</p>
+    <p class="card-text"><p>My friend Nithin made this one. It is here as an example placeholder as we built out the page for this code family.</p>
 </p>
   </div>
   <div class="card-footer text-muted">
-   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">PyMatching</span> 
+   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">BeliefProp</span>  <span class="badge badge-dark">BitFlip</span>  <span class="badge badge-dark">PyBeliefPropOS</span> 
   <br>
    <span class="badge badge-light">CommutationCheck</span> 
   </div>
@@ -135,9 +135,9 @@
 <br>
 
 <div class="card">
-  <h5 class="card-header"><a href="../codes/Cleve8">Cleve8</a></h5>
+  <h5 class="card-header"><a href="../codes/Shor9">Shor9</a></h5>
   <div class="card-body">
-    <p class="card-text"><p>The <code>&#91;&#91;8,3,3&#93;&#93;</code> code from Cleve and Gottesman &#40;1997&#41;, a convenient pedagogical example when studying how to construct encoding circuits, as it is one of the smallest codes with more than one logical qubit.</p>
+    <p class="card-text"><p>One of the earliest proof-of-concept error correcting codes, a concatenation of a 3-bit classical repetition code dedicated to protecting against bit-flips, and a 3-bit repetition code dedicated to protecting against phase-flips.</p>
 </p>
   </div>
   <div class="card-footer text-muted">
@@ -163,27 +163,13 @@
 <br>
 
 <div class="card">
-  <h5 class="card-header"><a href="../codes/Surface">Surface</a></h5>
+  <h5 class="card-header"><a href="../codes/Cleve8">Cleve8</a></h5>
   <div class="card-body">
-    <p class="card-text"><p>An open-boundary version of the famous toric code, the first topological code. Terrible rate, ok-ish distance, awesome locality – a tradeoff that will turn out to be fundamental to codes with only 2D connectivity.</p>
+    <p class="card-text"><p>The <code>&#91;&#91;8,3,3&#93;&#93;</code> code from Cleve and Gottesman &#40;1997&#41;, a convenient pedagogical example when studying how to construct encoding circuits, as it is one of the smallest codes with more than one logical qubit.</p>
 </p>
   </div>
   <div class="card-footer text-muted">
-   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">PyMatching</span> 
-  <br>
-   <span class="badge badge-light">CommutationCheck</span> 
-  </div>
-</div>
-<br>
-
-<div class="card">
-  <h5 class="card-header"><a href="../codes/NithinCode">NithinCode</a></h5>
-  <div class="card-body">
-    <p class="card-text"><p>My friend Nithin made this one. It is here as an example placeholder as we built out the page for this code family.</p>
-</p>
-  </div>
-  <div class="card-footer text-muted">
-   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">BeliefProp</span>  <span class="badge badge-dark">BitFlip</span>  <span class="badge badge-dark">PyBeliefPropOS</span> 
+   <span class="badge badge-dark">Table</span> 
   <br>
    <span class="badge badge-light">CommutationCheck</span> 
   </div>
@@ -205,13 +191,55 @@
 <br>
 
 <div class="card">
-  <h5 class="card-header"><a href="../codes/Shor9">Shor9</a></h5>
+  <h5 class="card-header"><a href="../codes/Toric">Toric</a></h5>
   <div class="card-body">
-    <p class="card-text"><p>One of the earliest proof-of-concept error correcting codes, a concatenation of a 3-bit classical repetition code dedicated to protecting against bit-flips, and a 3-bit repetition code dedicated to protecting against phase-flips.</p>
+    <p class="card-text"><p>The famous toric code, the first topological code. Terrible rate, ok-ish distance, awesome locality – a tradeoff that will turn out to be fundamental to codes with only 2D connectivity.</p>
+</p>
+  </div>
+  <div class="card-footer text-muted">
+   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">PyMatching</span> 
+  <br>
+   <span class="badge badge-light">CommutationCheck</span> 
+  </div>
+</div>
+<br>
+
+<div class="card">
+  <h5 class="card-header"><a href="../codes/Perfect5">Perfect5</a></h5>
+  <div class="card-body">
+    <p class="card-text"><p>One of the earliest proof-of-concept error correcting codes. The smallest code that can protect against any single-qubit error. Not a CSS code.</p>
 </p>
   </div>
   <div class="card-footer text-muted">
    <span class="badge badge-dark">Table</span> 
+  <br>
+   <span class="badge badge-light">CommutationCheck</span> 
+  </div>
+</div>
+<br>
+
+<div class="card">
+  <h5 class="card-header"><a href="../codes/Surface">Surface</a></h5>
+  <div class="card-body">
+    <p class="card-text"><p>An open-boundary version of the famous toric code, the first topological code. Terrible rate, ok-ish distance, awesome locality – a tradeoff that will turn out to be fundamental to codes with only 2D connectivity.</p>
+</p>
+  </div>
+  <div class="card-footer text-muted">
+   <span class="badge badge-dark">Table</span>  <span class="badge badge-dark">PyMatching</span> 
+  <br>
+   <span class="badge badge-light">CommutationCheck</span> 
+  </div>
+</div>
+<br>
+
+<div class="card">
+  <h5 class="card-header"><a href="../codes/GeneralizedBicycle">GeneralizedBicycle</a></h5>
+  <div class="card-body">
+    <p class="card-text"><p>The generalized bicycle codes &#40;GBCs&#41; extend the original bicycle codes by using two commuting square n × n binary matrices A and B, satisfying AB &#43; BA &#61; 0. The code is defined using the generator matrices: G<em>X &#61; &#40;A, B&#41;, G</em>Z &#61; &#40;Bᵀ, Aᵀ&#41;.  See Table I in <a href="https://doi.org/10.48550/arXiv.2306.16400">Lin and Pryadko &#40;2023&#41;</a> for the subscripts.</p>
+</p>
+  </div>
+  <div class="card-footer text-muted">
+   <span class="badge badge-dark">BitFlip</span>  <span class="badge badge-dark">PyBeliefProp</span> 
   <br>
    <span class="badge badge-light">CommutationCheck</span> 
   </div>

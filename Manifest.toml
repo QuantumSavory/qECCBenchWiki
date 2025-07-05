@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "78142d87dc54779d4d47e17d50bec4480cb7444a"
+project_hash = "da307e09402da59fdfbf68bf2712858509b3e80a"
 
 [[deps.AbstractAlgebra]]
 deps = ["LinearAlgebra", "MacroTools", "Preferences", "Random", "RandomExtensions", "SparseArrays"]
@@ -233,9 +233,9 @@ version = "0.4.1"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "403f2d8e209681fcbd9468a8514efff3ea08452e"
+git-tree-sha1 = "a656525c8b46aa6a1c76891552ed5381bb32ae7b"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.29.0"
+version = "3.30.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -724,6 +724,20 @@ deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll",
 git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
+
+[[deps.Hecke]]
+deps = ["AbstractAlgebra", "Dates", "Distributed", "FLINT_jll", "LazyArtifacts", "LinearAlgebra", "Markdown", "Nemo", "Pkg", "Printf", "Random", "RandomExtensions", "Serialization", "SparseArrays"]
+git-tree-sha1 = "39b4ef1cc64b2d64a5affa4576a6ed56d79aa4b5"
+uuid = "3e1990a7-5d81-5526-99ce-9ba3ff248f21"
+version = "0.36.1"
+
+    [deps.Hecke.extensions]
+    GAPExt = "GAP"
+    PolymakeExt = "Polymake"
+
+    [deps.Hecke.weakdeps]
+    GAP = "c863536a-3901-11e9-33e7-d5cd0df7b904"
+    Polymake = "d720cf60-89b5-51f5-aff5-213f193123e7"
 
 [[deps.HostCPUFeatures]]
 deps = ["BitTwiddlingConvenienceFunctions", "IfElse", "Libdl", "Static"]
