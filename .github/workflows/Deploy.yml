@@ -17,7 +17,7 @@ jobs:
         persist-credentials: false
     - name: Checkout evaluation database
       run: |
-        git fetch --depth=1 evaluation_results_branch
+        git fetch --depth=1 origin evaluation_results_branch
         git restore --source evaluation_results_branch codes/results.sqlite
     # NOTE: Python is necessary for the pre-rendering (minification) step
     - name: Install python
@@ -42,6 +42,8 @@ jobs:
             using NodeJS; run(`$(npm_cmd()) install highlight.js`);
             using Franklin;
             Pkg.activate("."); Pkg.instantiate();
+            include("wiki_database_passes.jl");
+            prep_everything(CodeMetadata.code_metadata);
             optimize()'
     - name: Fix URLs for PR preview deployment (pull request previews)
       if: github.event_name == 'pull_request'
