@@ -15,9 +15,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         persist-credentials: false
-        fetch-depth: 0
     - name: Checkout evaluation database
-      run: git restore --source evaluation_results_branch codes/results.sqlite
+      run: |
+        git fetch --depth=1 origin evaluation_results_branch
+        git restore --source origin/evaluation_results_branch codes/results.sqlite
     # NOTE: Python is necessary for the pre-rendering (minification) step
     - name: Install python
       uses: actions/setup-python@v4
