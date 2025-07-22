@@ -110,7 +110,7 @@ const code_metadata = Dict(
     ),
     Triangular488 => Dict(
         :family => [(3,), (5,), (7,), (9,)],
-        :decoders => [TableDecoder],
+        :decoders => [TableDecoder, PyBeliefPropOSDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/488_color",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
@@ -118,7 +118,7 @@ const code_metadata = Dict(
     ),
     Triangular666 => Dict(
         :family => [(3,), (5,), (7,), (9,)],
-        :decoders => [TableDecoder],
+        :decoders => [TableDecoder, PyBeliefPropOSDecoder],
         :setups => [CommutationCheckECCSetup],
         :ecczoo => "https://errorcorrectionzoo.org/c/triangular_color",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
