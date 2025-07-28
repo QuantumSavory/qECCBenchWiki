@@ -107,6 +107,22 @@ const code_metadata = Dict(
         :ecczoo => "https://errorcorrectionzoo.org/c/2bga",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
         :description => "The two-block group algebra (2BGA) codes extend the $(codelink(GeneralizedBicycle, "generalized bicycle (GB) codes")) by replacing the cyclic group with a general finite group, which can be non-abelian. The stabilizer generator matrices are defined using commuting square matrices derived from elements of a group algebra: H_X = (A, B), H_Z^T = [B; -A] where A and B are commuting ℓ × ℓ matrices, ensuring the CSS orthogonality condition."
+    ),
+    Triangular488 => Dict(
+        :family => [(3,), (5,), (7,), (9,)],
+        :decoders => [TableDecoder, PyBeliefPropOSDecoder],
+        :setups => [CommutationCheckECCSetup],
+        :ecczoo => "https://errorcorrectionzoo.org/c/488_color",
+        :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
+        :description => "The 4.8.8 Square-Octagon color code, defined on a lattice where each qubit sits on a vertex shared by two octagons and a square.  Each shape has an X and Z check on all the qubits on its vertices.  A code of odd distance 𝑑 has (𝑑² - 1)/2 + 𝑑 physical qubits."
+    ),
+    Triangular666 => Dict(
+        :family => [(3,), (5,), (7,), (9,)],
+        :decoders => [TableDecoder, PyBeliefPropOSDecoder],
+        :setups => [CommutationCheckECCSetup],
+        :ecczoo => "https://errorcorrectionzoo.org/c/triangular_color",
+        :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
+        :description => "The 6.6.6 Honeycomb color code, defined on a hexagonal lattice.  Each hexagon has an X and Z check on all the qubits on its vertices.  A code of odd distance 𝑑 has either (3𝑑² + 1)/4 or (3𝑑 - 1)²/4 physical qubits."
     )
 )
 
