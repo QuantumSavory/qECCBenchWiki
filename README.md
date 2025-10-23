@@ -6,6 +6,8 @@ julia> ] instantiate
 
 ## To evaluate codes and decoders and store raw data
 
+If you want to make previously executed runs available in the local database run `git restore --source evaluation_results_branch codes/results.sqlite`. If you want to start from scratch, just disregard this command.
+
 Add the codes and decoders of interest to `_0.helpers_and_metadata/code_metadata.jl` then
 
 ```
