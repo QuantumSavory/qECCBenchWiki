@@ -22,3 +22,6 @@ QuantumClifford = "0525e862-1e90-11e9-3e4d-1b39d7109de1"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
 TerminalLoggers = "5d786b92-1e48-4d6f-9151-6b4477ca9bed"
+
+[compat]
+PyQDecoders = "0.2.5"
