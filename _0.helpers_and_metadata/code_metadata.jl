@@ -123,6 +123,19 @@ const code_metadata = Dict(
         :ecczoo => "https://errorcorrectionzoo.org/c/triangular_color",
         :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
         :description => "The 6.6.6 Honeycomb color code, defined on a hexagonal lattice.  Each hexagon has an X and Z check on all the qubits on its vertices.  A code of odd distance 𝑑 has either (3𝑑² + 1)/4 or (3𝑑 - 1)²/4 physical qubits."
+    ),
+    Concat => Dict(
+        :family => [
+            (Perfect5(), Perfect5()), 
+            (Perfect5(), Steane7()), 
+            (Steane7(), Cleve8()), 
+            (Toric(2,2), Shor9())
+        ],
+        :decoders => [TableDecoder],
+        :setups => [CommutationCheckECCSetup],
+        :ecczoo => "https://errorcorrectionzoo.org/c/quantum_concatenated",
+        :errrange => (eᵐⁱⁿ, eᵐᵃˣ, steps),
+        :description => "Concatenated codes recursively encode the logical qubits of an outer code using an inner code. For outer code `[[n₁, k₁, d₁]]` and inner code `[[n₂, k₂, d₂]]`, the result is `[[n₁n₂, k₁k₂, d₁d₂]]`."
     )
 )
 
