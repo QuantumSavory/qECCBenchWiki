@@ -112,7 +112,7 @@ function prep_figures(code_metadata)
             _,ax,p = stabilizerplot_axis(sf, parity_checks(c))
             ax.title = "Parity Check Tableau\n(a.k.a. Stabilizer Generators)"
             cm = Makie.cgrad([:lightgray,:black], 2, categorical = true)
-            hz, hx, tz, tx = if iscss(c)
+            hz, hx, tz, tx = if iscss(c) === true # now 'nothing' type will be recognized as non-css
                 parity_matrix_z(c)[end:-1:1,:]', parity_matrix_x(c)[end:-1:1,:]', "Z parity checks", "X parity checks"
             else
                 h = stab_to_gf2(parity_checks(c))

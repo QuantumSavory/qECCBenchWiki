@@ -24,4 +24,7 @@ SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
 TerminalLoggers = "5d786b92-1e48-4d6f-9151-6b4477ca9bed"
 
 [compat]
+Franklin = "0.10.97"
+Hecke = "0.39.12"
 PyQDecoders = "0.2.5"
+Revise = "3.12.3"
