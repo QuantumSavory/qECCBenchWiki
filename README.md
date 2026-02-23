@@ -47,3 +47,14 @@ This is a Franklin.jl static website, together with the following extra passes f
 ## ENV variables
 
 - if `ENV["ECCBENCHWIKI_QUICKCHECK"]!=""` we will run very few samples per code, useful to check for overall correctness
+
+## Running on Slurm Clusters
+1. Set up Julia environment to evoid repeatedly setting up dependencies. You can do this by setting the `JULIA_DEPOT_PATH` environment variable to a directory on your HPC cluster where you want to store Julia packages. Optionally, set `JULIA_NUM_PRECOMPILE_TASKS` and `JULIA_PKG_PRECOMPILE_AUTO` to avoid precompilation overhead. For example, you can add the following lines to your startup script:
+
+```bash
+export JULIA_DEPOT_PATH="/path/to/your/julia/depot"
+export JULIA_NUM_PRECOMPILE_TASKS=1
+export JULIA_PKG_PRECOMPILE_AUTO=0
+```
+
+2. You can set up project environment and instantiate dependencies in Julia REPL before running the benchmarks. 
