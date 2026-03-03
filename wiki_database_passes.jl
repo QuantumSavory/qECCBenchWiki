@@ -10,7 +10,7 @@ include("_0.helpers_and_metadata/helpers.jl")
 include("_0.helpers_and_metadata/db_helpers.jl")
 
 using .Helpers: logrange, instancenameof, skipredundantfix
-using .DBHelpers: dbrow, dbnarray, dbrow!
+using .DBHelpers: dbrow, dbnarray, dbrow!, init_db!
 
 include("_0.helpers_and_metadata/code_metadata.jl")
 
@@ -27,7 +27,8 @@ using .CodeMarkdown: prep_markdown
 
 #
 
-function run_evaluations(code_metadata; include=nothing)
+function run_evaluations(code_metadata; include=nothing, db_path="codes/results.sqlite")
+    init_db!(db_path)
     for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
         !isnothing(include) && codetype ∉ include && continue
