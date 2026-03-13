@@ -5,23 +5,28 @@ using DBInterface
 
 using ..Helpers: logrange, instancenameof, skipredundantprefix, typenameof
 
-const CONN = DBInterface.connect(SQLite.DB, "codes/results.sqlite")
-SQLite.busy_timeout(CONN, 100)
+const CONN = Ref(DBInterface.connect(SQLite.DB, "codes/results.sqlite"))
 
-DBInterface.execute(
-    CONN,
-    """CREATE TABLE IF NOT EXISTS results
-    (code TEXT, decoder TEXT, setup TEXT, error REAL, nsamples INTEGER, logx REAL, logz REAL,
-        PRIMARY KEY (code, decoder, setup, error))"""
-)
-DBInterface.execute(CONN, "PRAGMA journal_mode=WAL")
+function init_db!(path="codes/results.sqlite")
+    CONN[] = DBInterface.connect(SQLite.DB, path)
+    SQLite.busy_timeout(CONN[], 100)
+    DBInterface.execute(
+        CONN[],
+        """CREATE TABLE IF NOT EXISTS results
+        (code TEXT, decoder TEXT, setup TEXT, error REAL, nsamples INTEGER, logx REAL, logz REAL,
+            PRIMARY KEY (code, decoder, setup, error))"""
+    )
+    DBInterface.execute(CONN[], "PRAGMA journal_mode=WAL")
+end
+
+init_db!()
 
 function dbrow(code, decoder, setup, e)
     coden = skipredundantprefix(instancenameof(code))
     decodern = skipredundantprefix(decoder)
     setupn = skipredundantprefix(setup)
     res = DBInterface.execute(
-        CONN,
+        CONN[],
         "SELECT * FROM results WHERE code=? AND decoder=? AND setup=? AND error=?",
         (coden, decodern, setupn, e))
     isempty(res) ? nothing : first(res)
@@ -56,7 +61,7 @@ function dbrow!(code, decoder, setup, e, n, lx, lz)
     setupn = skipredundantprefix(setup)
     while true # retry on sqlite busy
         try
-            newrow = DBInterface.transaction(CONN) do
+            newrow = DBInterface.transaction(CONN[]) do
                 old = dbrow(code, decoder, setup, e)
                 newn, newlx, newlz = if isnothing(old)
                     n, lx, lz
@@ -66,7 +71,7 @@ function dbrow!(code, decoder, setup, e, n, lx, lz)
                 end
                 newrow = coden, decodern, setupn, e, newn, newlx, newlz
                 DBInterface.execute(
-                    CONN,
+                    CONN[],
                     "REPLACE INTO results (code, decoder, setup, error, nsamples, logx, logz) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     newrow
                 )
