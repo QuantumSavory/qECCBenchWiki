@@ -15,6 +15,7 @@ function init_db!(path=DB_PATH[])
     if CONN[] !== nothing
         DBInterface.close!(CONN[]) # close existing connection if path changes
     end
+    isdir(dirname(path)) || mkdir(dirname(path))
     CONN[] = DBInterface.connect(SQLite.DB, path)
     DB_PATH[] = path
     SQLite.busy_timeout(CONN[], 100)
