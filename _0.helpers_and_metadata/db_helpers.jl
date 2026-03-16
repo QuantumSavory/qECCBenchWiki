@@ -5,10 +5,18 @@ using DBInterface
 
 using ..Helpers: logrange, instancenameof, skipredundantprefix, typenameof
 
-const CONN = Ref(DBInterface.connect(SQLite.DB, "codes/results.sqlite"))
+const CONN = Ref{Union{Nothing, SQLite.DB}}(nothing)
+const DB_PATH = Ref("codes/results.sqlite")
 
-function init_db!(path="codes/results.sqlite")
+function init_db!(path=DB_PATH[])
+    if CONN[] !== nothing && path == DB_PATH[]
+        return CONN[] # already initialized with the same path 
+    end
+    if CONN[] !== nothing
+        DBInterface.close!(CONN[]) # close existing connection if path changes
+    end
     CONN[] = DBInterface.connect(SQLite.DB, path)
+    DB_PATH[] = path
     SQLite.busy_timeout(CONN[], 100)
     DBInterface.execute(
         CONN[],
@@ -17,6 +25,7 @@ function init_db!(path="codes/results.sqlite")
             PRIMARY KEY (code, decoder, setup, error))"""
     )
     DBInterface.execute(CONN[], "PRAGMA journal_mode=WAL")
+    return CONN[]
 end
 
 init_db!()
