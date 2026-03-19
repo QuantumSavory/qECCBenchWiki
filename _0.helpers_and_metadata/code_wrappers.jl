@@ -2,7 +2,7 @@
 
 GeneralizedBicycle = PrettyCodeFamilyWrapper(
     :GeneralizedBicycle,
-    splat(generalized_bicycle_codes),
+    splat(generalized_bicycle_code_as_2bga),
     Dict(
         :C₂₇ => ([0 ,  1,  3,  7], [0 ,  1, 12, 19], 27),
         :C₃₀ => ([0 , 10,  6, 13], [0 , 25, 16, 12], 30),
@@ -95,7 +95,7 @@ B₇₅₆ = y^5 + x^3  + x^19
 
 TwoBlockGroupAlgebra = PrettyCodeFamilyWrapper(
     :TwoBlockGroupAlgebra,
-    two_block_group_algebra_codes,
+    two_block_group_algebra_code,
     Dict(
         :A1 => A1,
         :A2 => A2,
