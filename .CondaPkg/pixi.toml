@@ -9,7 +9,7 @@ scipy = "*"
     [dependencies.python]
     channel = "conda-forge"
     build = "*cp*"
-    version = ">=3.10, <3.13, >=3.10,<3.14"
+    version = ">=3.10, <3.13, >=3.10,!=3.14.0,!=3.14.1,<4"
 
 [project]
 name = ".CondaPkg"

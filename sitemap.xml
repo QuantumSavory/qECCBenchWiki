@@ -2,182 +2,266 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/pyparsing/ai/best_practices/index.html</loc>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>codes/Shor9/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Surface/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy/random/LICENSE/index.html</loc>
-    <lastmod>2025-11-17</lastmod>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/mt19937/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>contributors/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
-    <loc>codes/Cleve8/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/pcg64/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/werkzeug/debug/shared/ICON_LICENSE/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>codes/Cleve8/index.html</loc>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Gottesman/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/scipy/fft/_pocketfft/LICENSE/index.html</loc>
-    <lastmod>2025-11-15</lastmod>
+    <lastmod>2026-02-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Toric/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>allcodes/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>logistics/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/flask/sansio/README/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Perfect5/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>alldecoders/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>faq/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/fft/pocketfft/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>codes/Concat/index.html</loc>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Triangular488/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Steane7/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>allcircuits/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/splitmix64/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/GeneralizedBicycle/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/TwoBlockGroupAlgebra/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/distributions/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/sfc64/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/numpy-2.4.3.dist-info/licenses/numpy/random/src/philox/LICENSE/index.html</loc>
+    <lastmod>2026-03-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/Triangular666/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>codes/NithinCode/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/README/index.html</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/share/doc/readline/readline/</loc>
+    <lastmod>2025-12-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/idlelib/help/</loc>
-    <lastmod>2025-10-22</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/matplotlib/backends/web_backend/ipython_inline_figure/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/matplotlib/backends/web_backend/single_figure/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/panqec/gui/templates/gui/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/panqec/gui/templates/index/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>.CondaPkg/.pixi/envs/default/lib/python3.12/site-packages/matplotlib/backends/web_backend/all_figures/</loc>
-    <lastmod>2025-11-29</lastmod>
+    <lastmod>2026-04-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/share/doc/readline/history/</loc>
+    <lastmod>2025-12-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
+    <loc>.CondaPkg/.pixi/envs/default/share/doc/readline/rluserman/</loc>
+    <lastmod>2025-12-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
