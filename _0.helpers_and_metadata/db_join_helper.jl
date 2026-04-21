@@ -4,6 +4,8 @@ using DataFrames
 using SQLite
 using DBInterface
 
+export join_results
+
 """
     join_results(dir; output_path="codes/results.sqlite")
 
