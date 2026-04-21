@@ -104,6 +104,3 @@ function init_results_db(output_path)
 end
 
 end
-
-using .DBJoinHelper: join_results
-join_results("codes/workers"; output_path="codes/merged.sqlite")
