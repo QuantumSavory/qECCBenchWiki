@@ -8,6 +8,7 @@ global_logger(TerminalLogger(right_justify=120))
 
 include("_0.helpers_and_metadata/helpers.jl")
 include("_0.helpers_and_metadata/db_helpers.jl")
+include("_0.helpers_and_metadata/slurm_helper.jl")
 
 using .Helpers: logrange, instancenameof, skipredundantfix
 using .DBHelpers: dbrow, dbnarray, dbrow!, init_db!
@@ -27,8 +28,12 @@ using .CodeMarkdown: prep_markdown
 
 #
 
-function run_evaluations(code_metadata; include=nothing, db_path="codes/results.sqlite")
-    init_db!(db_path)
+function run_evaluations(code_metadata; include=nothing, worker_db=false, db_path="codes/")
+    if !worker_db
+        init_db!(db_path)
+    else
+        init_db!(db_path; filename=generate_unique_name())
+    end
     for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
         !isnothing(include) && codetype ∉ include && continue
