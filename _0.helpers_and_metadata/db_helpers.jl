@@ -6,17 +6,18 @@ using DBInterface
 using ..Helpers: logrange, instancenameof, skipredundantprefix, typenameof
 
 const CONN = Ref{Union{Nothing, SQLite.DB}}(nothing)
-const DB_PATH = Ref("codes/results.sqlite")
+const DB_PATH = Ref("codes/")
 
-function init_db!(path=DB_PATH[])
+function init_db!(path=DB_PATH[]; filename="results.sqlite") # path should be a directory, not a file
+    file_path = joinpath(path, filename) # path/filename
     if CONN[] !== nothing && path == DB_PATH[]
         return CONN[] # already initialized with the same path 
     end
     if CONN[] !== nothing
         DBInterface.close!(CONN[]) # close existing connection if path changes
     end
-    isdir(dirname(path)) || mkdir(dirname(path))
-    CONN[] = DBInterface.connect(SQLite.DB, path)
+    isdir(path) || mkdir(path)
+    CONN[] = DBInterface.connect(SQLite.DB, file_path)
     DB_PATH[] = path
     SQLite.busy_timeout(CONN[], 100)
     DBInterface.execute(
