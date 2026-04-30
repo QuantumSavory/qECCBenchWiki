@@ -4,6 +4,8 @@ using DataFrames
 using SQLite
 using DBInterface
 
+export join_results
+
 """
     join_results(dir; output_path="codes/results.sqlite")
 
@@ -104,6 +106,3 @@ function init_results_db(output_path)
 end
 
 end
-
-using .DBJoinHelper: join_results
-join_results("codes/workers"; output_path="codes/merged.sqlite")
