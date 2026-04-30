@@ -25,6 +25,7 @@ SlurmClusterManager = "c82cd089-7bf7-41d7-976b-6b5d413cbe0a"
 TerminalLoggers = "5d786b92-1e48-4d6f-9151-6b4477ca9bed"
 
 [compat]
+AlgebraOfGraphics = "0.12.2"
 DataFrames = "1.8.1"
 DataFramesMeta = "0.15.6"
 Franklin = "0.10.97"
