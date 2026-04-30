@@ -24,6 +24,11 @@ Optionally, if you want to specify a location (directory) for the generated data
 
 If you have multiple evaluation runs that have generated separate databases, you can merge them into a single database using the `_0.helpers_and_metadata/db_join_helper.jl` script. 
 
+```julia
+include("_0.helpers_and_metadata/db_join_helper.jl")
+using .DBJoinHelper: join_results
+join_results("path/to/results"; output_path="path/to/merged_results.sqlite")
+```
 ## To generate plots and markdown entries
 
 ```
@@ -68,11 +73,7 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
     export JULIA_CPU_TARGET="generic;skylake-avx512,clone_all;znver2,clone_all"
     ```
 
-2. You might use `SlurmClusterManager.jl` to manage the execution of your benchmarks across the cluster. Add this to your Julia environment:
-
-    ```
-    julia > ] add SlurmClusterManager
-    ```
+2. You might use `SlurmClusterManager.jl` to manage the execution of your benchmarks across the cluster. It's already included in the project dependencies.
 
 3. You can set up project environment, instantiate, and precompile before running the benchmarks at a large scale. This avoids the overhead of setting up the environment and precompilation for each job submission. For example, you can submit the following script as a Slurm job:
 
