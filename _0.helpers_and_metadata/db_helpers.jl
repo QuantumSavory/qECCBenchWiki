@@ -7,18 +7,21 @@ using ..Helpers: logrange, instancenameof, skipredundantprefix, typenameof
 
 const CONN = Ref{Union{Nothing, SQLite.DB}}(nothing)
 const DB_PATH = Ref("codes/")
+const DB_FILENAME = Ref("results.sqlite")
 
 function init_db!(path=DB_PATH[]; filename="results.sqlite") # path should be a directory, not a file
     file_path = joinpath(path, filename) # path/filename
-    if CONN[] !== nothing && path == DB_PATH[]
-        return CONN[] # already initialized with the same path 
+    if CONN[] !== nothing && path == DB_PATH[] && filename == DB_FILENAME[]
+        return CONN[] # already initialized with the same database
     end
     if CONN[] !== nothing
         DBInterface.close!(CONN[]) # close existing connection if path changes
+        CONN[] = nothing
     end
-    isdir(path) || mkdir(path)
+    mkpath(path)
     CONN[] = DBInterface.connect(SQLite.DB, file_path)
     DB_PATH[] = path
+    DB_FILENAME[] = filename
     SQLite.busy_timeout(CONN[], 100)
     DBInterface.execute(
         CONN[],
@@ -30,14 +33,14 @@ function init_db!(path=DB_PATH[]; filename="results.sqlite") # path should be a 
     return CONN[]
 end
 
-init_db!()
+db() = isnothing(CONN[]) ? init_db!() : CONN[]
 
 function dbrow(code, decoder, setup, e)
     coden = skipredundantprefix(instancenameof(code))
     decodern = skipredundantprefix(decoder)
     setupn = skipredundantprefix(setup)
     res = DBInterface.execute(
-        CONN[],
+        db(),
         "SELECT * FROM results WHERE code=? AND decoder=? AND setup=? AND error=?",
         (coden, decodern, setupn, e))
     isempty(res) ? nothing : first(res)
@@ -72,7 +75,8 @@ function dbrow!(code, decoder, setup, e, n, lx, lz)
     setupn = skipredundantprefix(setup)
     while true # retry on sqlite busy
         try
-            newrow = DBInterface.transaction(CONN[]) do
+            conn = db()
+            newrow = DBInterface.transaction(conn) do
                 old = dbrow(code, decoder, setup, e)
                 newn, newlx, newlz = if isnothing(old)
                     n, lx, lz
@@ -82,7 +86,7 @@ function dbrow!(code, decoder, setup, e, n, lx, lz)
                 end
                 newrow = coden, decodern, setupn, e, newn, newlx, newlz
                 DBInterface.execute(
-                    CONN[],
+                    conn,
                     "REPLACE INTO results (code, decoder, setup, error, nsamples, logx, logz) VALUES (?, ?, ?, ?, ?, ?, ?)",
                     newrow
                 )
