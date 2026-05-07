@@ -23,13 +23,13 @@ function init_db!(path=DB_PATH[]; filename="results.sqlite") # path should be a 
     DB_PATH[] = path
     DB_FILENAME[] = filename
     SQLite.busy_timeout(CONN[], 100)
-    DBInterface.execute(
+    collect(DBInterface.execute(
         CONN[],
         """CREATE TABLE IF NOT EXISTS results
         (code TEXT, decoder TEXT, setup TEXT, error REAL, nsamples INTEGER, logx REAL, logz REAL,
             PRIMARY KEY (code, decoder, setup, error))"""
-    )
-    DBInterface.execute(CONN[], "PRAGMA journal_mode=WAL")
+    ))
+    collect(DBInterface.execute(CONN[], "PRAGMA journal_mode=WAL"))
     return CONN[]
 end
 
@@ -43,7 +43,23 @@ function dbrow(code, decoder, setup, e)
         db(),
         "SELECT * FROM results WHERE code=? AND decoder=? AND setup=? AND error=?",
         (coden, decodern, setupn, e))
-    isempty(res) ? nothing : first(res)
+    try
+        if isempty(res)
+            return nothing
+        end
+        row = first(res)
+        return (
+            code=row.code,
+            decoder=row.decoder,
+            setup=row.setup,
+            error=row.error,
+            nsamples=row.nsamples,
+            logx=row.logx,
+            logz=row.logz,
+        )
+    finally
+        DBInterface.close!(res)
+    end
 end
 
 function dbnarray(codes, decoders, setups, errors)
@@ -76,23 +92,26 @@ function dbrow!(code, decoder, setup, e, n, lx, lz)
     while true # retry on sqlite busy
         try
             conn = db()
-            newrow = DBInterface.transaction(conn) do
-                old = dbrow(code, decoder, setup, e)
-                newn, newlx, newlz = if isnothing(old)
-                    n, lx, lz
-                else
-                    newn = n + old.nsamples
-                    newn, (lx * n + old.logx * old.nsamples) / newn, (lz * n + old.logz * old.nsamples) / newn
-                end
-                newrow = coden, decodern, setupn, e, newn, newlx, newlz
-                DBInterface.execute(
-                    conn,
-                    "REPLACE INTO results (code, decoder, setup, error, nsamples, logx, logz) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                    newrow
-                )
-                newrow
-            end
-            return newrow
+            collect(DBInterface.execute(
+                conn,
+                """
+                INSERT INTO results (code, decoder, setup, error, nsamples, logx, logz)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(code, decoder, setup, error) DO UPDATE SET
+                    nsamples = results.nsamples + excluded.nsamples,
+                    logx = (
+                        results.logx * results.nsamples +
+                        excluded.logx * excluded.nsamples
+                    ) / (results.nsamples + excluded.nsamples),
+                    logz = (
+                        results.logz * results.nsamples +
+                        excluded.logz * excluded.nsamples
+                    ) / (results.nsamples + excluded.nsamples)
+                """,
+                (coden, decodern, setupn, e, n, lx, lz),
+            ))
+            row = dbrow(code, decoder, setup, e)
+            return row.code, row.decoder, row.setup, row.error, row.nsamples, row.logx, row.logz
         catch e
             if e == SQLite.SQLiteException("database is locked")
                 @debug "Database locked, retrying..."
