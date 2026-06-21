@@ -6,7 +6,28 @@
 # Edit the config block below for each run. Each task calls run_evaluations for
 # one code family and lets the existing project helpers create result files.
 
-const REPO_ROOT = abspath(joinpath(@__DIR__, "..", ".."))
+function find_repo_root()
+    candidates = String[]
+    for env_key in ("QECCBENCHWIKI_REPO_ROOT", "SLURM_SUBMIT_DIR")
+        if haskey(ENV, env_key) && !isempty(ENV[env_key])
+            push!(candidates, ENV[env_key])
+        end
+    end
+    push!(candidates, pwd())
+    push!(candidates, joinpath(@__DIR__, "..", ".."))
+
+    for candidate in candidates
+        root = abspath(candidate)
+        if isfile(joinpath(root, "Project.toml")) && isfile(joinpath(root, "wiki_database_passes.jl"))
+            return root
+        end
+    end
+
+    error("Could not locate qECCBenchWiki repo root. Submit from the repo root, set --chdir to the repo root, or set QECCBENCHWIKI_REPO_ROOT.")
+end
+
+const REPO_ROOT = find_repo_root()
+const SLURM_SCRIPT_DIR = joinpath(REPO_ROOT, "script", "slurm")
 
 using Pkg
 Pkg.activate(REPO_ROOT)
@@ -17,7 +38,7 @@ using Distributed
 using SlurmClusterManager
 using TOML
 
-include(joinpath(@__DIR__, "slurm_manifest_generator.jl"))
+include(joinpath(SLURM_SCRIPT_DIR, "slurm_manifest_generator.jl"))
 include(joinpath(REPO_ROOT, "_0.helpers_and_metadata", "db_join_helper.jl"))
 
 using .SlurmManifestGenerator: ManifestConfig, build_manifest, write_manifest_file
