@@ -6,27 +6,7 @@
 # Edit the config block below for each run. Each task calls run_evaluations for
 # one code family and lets the existing project helpers create result files.
 
-function find_repo_root()
-    candidates = String[]
-    for env_key in ("QECCBENCHWIKI_REPO_ROOT", "SLURM_SUBMIT_DIR")
-        if haskey(ENV, env_key) && !isempty(ENV[env_key])
-            push!(candidates, ENV[env_key])
-        end
-    end
-    push!(candidates, pwd())
-    push!(candidates, joinpath(@__DIR__, "..", ".."))
-
-    for candidate in candidates
-        root = abspath(candidate)
-        if isfile(joinpath(root, "Project.toml")) && isfile(joinpath(root, "wiki_database_passes.jl"))
-            return root
-        end
-    end
-
-    error("Could not locate qECCBenchWiki repo root. Submit from the repo root, set --chdir to the repo root, or set QECCBENCHWIKI_REPO_ROOT.")
-end
-
-const REPO_ROOT = find_repo_root()
+const REPO_ROOT = pwd()
 const SLURM_SCRIPT_DIR = joinpath(REPO_ROOT, "script", "slurm")
 
 using Pkg
@@ -106,10 +86,10 @@ function build_run_manifest()
 end
 
 function load_worker_code!()
-    @everywhere begin
-        using Dates
-        using TOML
+    remotecall_eval(Main, workers(), :(using Dates))
+    remotecall_eval(Main, workers(), :(using TOML))
 
+    @everywhere begin
         cd($REPO_ROOT)
         include(joinpath($REPO_ROOT, "wiki_database_passes.jl"))
 
