@@ -28,11 +28,16 @@ using .CodeMarkdown: prep_markdown
 
 #
 
-function run_evaluations(code_metadata; include=nothing, worker_db=false, db_path="codes/")
+function run_evaluations(code_metadata; include=nothing, worker_db=false, db_path="codes/", db_filename=nothing)
     if !worker_db
-        init_db!(db_path)
+        if isnothing(db_filename)
+            init_db!(db_path)
+        else
+            init_db!(db_path; filename=db_filename)
+        end
     else
-        init_db!(db_path; filename=generate_unique_name())
+        filename = isnothing(db_filename) ? generate_unique_name() : db_filename
+        init_db!(db_path; filename)
     end
     for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
