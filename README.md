@@ -17,7 +17,7 @@ julia> run_evaluations(CodeMetadata.code_metadata)
 
 If you want to run only some codes, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
 
-Optionally, if you want to specify a location (directory) for the generated database, you can use `run_evaluations(code_metadata; database_path="path/to/database")`.
+Optionally, if you want to specify a location (directory) for the generated database, you can use `run_evaluations(code_metadata; db_path="path/to/database")`.
 
 
 ## To merge evaluation results from multiple runs
@@ -92,9 +92,16 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
     ```
 
 ### Running Benchmarks
-1. You can create a Julia script that runs the benchmarks for a specific set of codes and decoders as submit it as a Slurm job. In your script, you can call `run_evaluations` with the appropriate parameters to specify the output directory and set `worker_db` to `true` so the results are written to the database from each worker process. For example:
+1. Run the Slurm entrypoint from the repository root. It writes a run manifest under `runs/slurm/<run_id>/`, assigns one manifest-owned database filename per task, and passes those filenames into `run_evaluations`.
+
+    ```bash
+    sbatch -N 4 -n 12 -t 01:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
+    ```
+
+    For custom scripts, pass an explicit database directory and filename when you want a run to write to a specific SQLite file:
+
     ```julia
-    run_evaluations(CodeMetadata.code_metadata; output_path="path/to/results", worker_db=true)`
+    run_evaluations(CodeMetadata.code_metadata; db_path="path/to/results", db_filename="db_task.sqlite")
     ```
 2. To merge your results from multiple runs, you can use the `join_results` function from the `DBJoinHelper` module. This function takes a directory containing multiple SQLite databases and merges them into a single database. For example:
 

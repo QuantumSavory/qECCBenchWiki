@@ -67,7 +67,6 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             include=[task],
             db_path=SLURM_DB_DIR,
             db_filename=task_manifest["db_filename"],
-            worker_db=true,
         )
         return "Result for $(task_name)"
     end

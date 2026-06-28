@@ -8,7 +8,6 @@ global_logger(TerminalLogger(right_justify=120))
 
 include("_0.helpers_and_metadata/helpers.jl")
 include("_0.helpers_and_metadata/db_helpers.jl")
-include("_0.helpers_and_metadata/slurm_helper.jl")
 
 using .Helpers: logrange, instancenameof, skipredundantfix
 using .DBHelpers: dbrow, dbnarray, dbrow!, init_db!
@@ -28,16 +27,11 @@ using .CodeMarkdown: prep_markdown
 
 #
 
-function run_evaluations(code_metadata; include=nothing, worker_db=false, db_path="codes/", db_filename=nothing)
-    if !worker_db
-        if isnothing(db_filename)
-            init_db!(db_path)
-        else
-            init_db!(db_path; filename=db_filename)
-        end
+function run_evaluations(code_metadata; include=nothing, db_path="codes/", db_filename=nothing)
+    if isnothing(db_filename)
+        init_db!(db_path)
     else
-        filename = isnothing(db_filename) ? generate_unique_name() : db_filename
-        init_db!(db_path; filename)
+        init_db!(db_path; filename=db_filename)
     end
     for (codetype, metadata) in code_metadata
         codetypename = typenameof(codetype)
