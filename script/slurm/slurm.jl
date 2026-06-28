@@ -7,13 +7,13 @@
 # Should be run from repo root!
 
 # Do instatiate in julia REPL
-# ENV["ECCBENCHWIKI_QUICKCHECK"]="true"
+ENV["ECCBENCHWIKI_QUICKCHECK"]="true"
 
 using Pkg
 
 Pkg.activate(pwd())
 
-include("script/slurm/slurm_manifest_generator.jl")
+include(joinpath(pwd(), "script/slurm/slurm_manifest_generator.jl"))
 
 using .SlurmManifestGenerator: write_slurm_manifest
 
