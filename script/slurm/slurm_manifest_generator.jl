@@ -22,6 +22,7 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
     manifest_path = joinpath(run_dir, "manifest.toml")
     db_dir = joinpath(run_dir, "db")
     log_dir = joinpath(run_dir, "logs")
+    status_dir = joinpath(run_dir, "status")
 
     tasks = Dict{String,Any}[]
     for (index, family) in enumerate(task_names)
@@ -36,6 +37,7 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
             "db_filename" => filename,
             "db_path" => joinpath(db_dir, filename),
             "log_path" => joinpath(log_dir, "$(id).log"),
+            "status_path" => joinpath(status_dir, "$(id).toml"),
         ))
     end
 
@@ -46,6 +48,7 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
         "manifest_path" => manifest_path,
         "db_dir" => db_dir,
         "log_dir" => log_dir,
+        "status_dir" => status_dir,
         "tasks" => tasks,
     )
 end
@@ -59,6 +62,7 @@ function write_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
 
     mkpath(manifest["db_dir"])
     mkpath(manifest["log_dir"])
+    mkpath(manifest["status_dir"])
 
     open(manifest["manifest_path"], "w") do io
         TOML.print(io, manifest)

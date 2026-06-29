@@ -54,20 +54,71 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 @info "nprocs=$(nprocs()) nworkers=$(nworkers()) workers=$(workers())"
 
 @everywhere begin
+    using Dates
+    using TOML
+
     include(joinpath(pwd(), "wiki_database_passes.jl"))
 
     const SLURM_DB_DIR = $MANIFEST_DB_DIR
+
+    timestamp_utc(t=now(UTC)) = Dates.format(t, dateformat"yyyy-mm-ddTHH:MM:SS") * "Z"
+
+    function output_database_files(task_manifest)
+        db_path = task_manifest["db_path"]
+        return isfile(db_path) ? [db_path] : String[]
+    end
+
+    function write_task_status(task_manifest; state, started_at, finished_at=nothing, exception_text=nothing)
+        status = Dict{String,Any}(
+            "task_id" => task_manifest["id"],
+            "family" => task_manifest["family"],
+            "worker_id" => myid(),
+            "started_at" => started_at,
+            "state" => state,
+            "db_path" => task_manifest["db_path"],
+            "db_filename" => task_manifest["db_filename"],
+            "output_database_files" => output_database_files(task_manifest),
+        )
+
+        if !isnothing(finished_at)
+            status["finished_at"] = finished_at
+        end
+
+        if !isnothing(exception_text)
+            status["exception_text"] = exception_text
+        end
+
+        status_path = task_manifest["status_path"]
+        mkpath(dirname(status_path))
+        open(status_path, "w") do io
+            TOML.print(io, status)
+        end
+    end
 
     function run_task(task_manifest)
         task_name = Symbol(task_manifest["family"])
         task = getproperty(CodeMetadata, task_name)
         @info "Running task: $task_name on $(myid())"
-        run_evaluations(
-            CodeMetadata.code_metadata;
-            include=[task],
-            db_path=SLURM_DB_DIR,
-            db_filename=task_manifest["db_filename"],
-        )
+        started_at = timestamp_utc()
+        write_task_status(task_manifest; state="running", started_at=started_at)
+        try
+            run_evaluations(
+                CodeMetadata.code_metadata;
+                include=[task],
+                db_path=SLURM_DB_DIR,
+                db_filename=task_manifest["db_filename"],
+            )
+            write_task_status(task_manifest; state="succeeded", started_at=started_at, finished_at=timestamp_utc())
+        catch err
+            write_task_status(
+                task_manifest;
+                state="failed",
+                started_at=started_at,
+                finished_at=timestamp_utc(),
+                exception_text=sprint(showerror, err),
+            )
+            rethrow()
+        end
         return "Result for $(task_name)"
     end
 end
