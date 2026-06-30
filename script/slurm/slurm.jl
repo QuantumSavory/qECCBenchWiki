@@ -63,7 +63,9 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 
     const SLURM_DB_DIR = $MANIFEST_DB_DIR
 
-    timestamp_utc(t=now(UTC)) = Dates.format(t, dateformat"yyyy-mm-ddTHH:MM:SS") * "Z"
+    const SLURM_TIMESTAMP_FORMAT = Dates.DateFormat("yyyy-mm-ddTHH:MM:SS")
+
+    timestamp_utc(t=Dates.now(Dates.UTC)) = Dates.format(t, SLURM_TIMESTAMP_FORMAT) * "Z"
 
     function output_database_files(task_manifest)
         db_path = task_manifest["db_path"]
