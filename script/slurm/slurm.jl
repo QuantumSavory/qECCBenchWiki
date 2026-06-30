@@ -55,6 +55,8 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 
 @everywhere begin
     using Dates
+    using Logging
+    using TerminalLoggers
     using TOML
 
     include(joinpath(pwd(), "wiki_database_passes.jl"))
@@ -95,7 +97,36 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
         end
     end
 
-    function run_task(task_manifest)
+    function with_task_log(f, task_manifest)
+        log_path = task_manifest["log_path"]
+        mkpath(dirname(log_path))
+
+        open(log_path, "w") do log_io
+            task_logger = TerminalLogger(log_io; right_justify=120)
+            redirect_stdout(log_io) do
+                redirect_stderr(log_io) do
+                    with_logger(task_logger) do
+                        try
+                            result = f()
+                            flush(log_io)
+                            return result
+                        catch err
+                            println(log_io)
+                            println(log_io, "Task failed with exception:")
+                            showerror(log_io, err, catch_backtrace())
+                            println(log_io)
+                            flush(log_io)
+                            rethrow()
+                        finally
+                            flush(log_io)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    function run_task_body(task_manifest)
         task_name = Symbol(task_manifest["family"])
         task = getproperty(CodeMetadata, task_name)
         @info "Running task: $task_name on $(myid())"
@@ -120,6 +151,12 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             rethrow()
         end
         return "Result for $(task_name)"
+    end
+
+    function run_task(task_manifest)
+        return with_task_log(task_manifest) do
+            run_task_body(task_manifest)
+        end
     end
 end
 
