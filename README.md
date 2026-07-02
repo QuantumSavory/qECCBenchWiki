@@ -105,10 +105,10 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
     ```julia
     run_evaluations(CodeMetadata.code_metadata; db_path="path/to/results", db_filename="db_task.sqlite")
     ```
-2. To merge your results from multiple runs, you can use the `join_results` function from the `DBJoinHelper` module. This function takes a directory containing multiple SQLite databases and merges them into a single database. For example:
+2. To merge one Slurm run's per-task databases into a single run-level database, pass the run directory to the Slurm results script:
 
-    ```julia
-    include("_0.helpers_and_metadata/db_join_helper.jl")
-    using .DBJoinHelper: join_results
-    join_results("path/to/results"; output_path="path/to/merged_results.sqlite")
+    ```bash
+    julia --project=. script/slurm/get_results.jl runs/slurm/<run_id>
     ```
+
+    This reads `runs/slurm/<run_id>/db/*.sqlite` and writes `runs/slurm/<run_id>/results.sqlite`.
