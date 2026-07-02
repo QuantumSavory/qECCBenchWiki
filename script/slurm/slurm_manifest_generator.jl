@@ -20,6 +20,7 @@ db_filename(uuid) = "db_$(uuid).sqlite"
 function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_run_id())
     run_dir = joinpath(run_root, run_id)
     manifest_path = joinpath(run_dir, "manifest.toml")
+    summary_path = joinpath(run_dir, "summary.toml")
     db_dir = joinpath(run_dir, "db")
     log_dir = joinpath(run_dir, "logs")
     status_dir = joinpath(run_dir, "status")
@@ -46,6 +47,7 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
         "run_dir" => run_dir,
         "generated_at" => timestamp_utc(),
         "manifest_path" => manifest_path,
+        "summary_path" => summary_path,
         "db_dir" => db_dir,
         "log_dir" => log_dir,
         "status_dir" => status_dir,

@@ -98,6 +98,8 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
     sbatch -N 4 -n 12 -t 01:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
     ```
 
+    After all task phases finish, inspect `runs/slurm/<run_id>/summary.toml` for the run-level succeeded, failed, incomplete, and missing-status task lists.
+
     For custom scripts, pass an explicit database directory and filename when you want a run to write to a specific SQLite file:
 
     ```julia

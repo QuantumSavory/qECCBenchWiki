@@ -16,6 +16,8 @@ Pkg.activate(pwd())
 include(joinpath(pwd(), "script/slurm/slurm_manifest_generator.jl"))
 
 using .SlurmManifestGenerator: write_slurm_manifest
+using Dates
+using TOML
 
 const LIGHT_TASKS = [
     :Gottesman,
@@ -45,6 +47,95 @@ end
 const LIGHT_MANIFEST_TASKS = manifest_tasks(manifest, LIGHT_TASKS)
 const HEAVY_MANIFEST_TASKS = manifest_tasks(manifest, HEAVY_TASKS)
 const MANIFEST_DB_DIR = manifest["db_dir"]
+
+const RUN_SUMMARY_TIMESTAMP_FORMAT = Dates.DateFormat("yyyy-mm-ddTHH:MM:SS")
+
+run_summary_timestamp_utc(t=Dates.now(Dates.UTC)) = Dates.format(t, RUN_SUMMARY_TIMESTAMP_FORMAT) * "Z"
+
+function task_status(task_manifest)
+    status_path = task_manifest["status_path"]
+    return isfile(status_path) ? TOML.parsefile(status_path) : nothing
+end
+
+function report_task_entry(task_manifest, status)
+    entry = Dict{String,Any}(
+        "task_id" => task_manifest["id"],
+        "family" => task_manifest["family"],
+        "log_path" => task_manifest["log_path"],
+        "db_path" => task_manifest["db_path"],
+        "status_path" => task_manifest["status_path"],
+    )
+
+    if isnothing(status)
+        entry["state"] = "missing"
+        return entry
+    end
+
+    for key in (
+        "state",
+        "worker_id",
+        "started_at",
+        "finished_at",
+        "exception_text",
+        "output_database_files",
+        "db_filename",
+    )
+        haskey(status, key) && (entry[key] = status[key])
+    end
+
+    return entry
+end
+
+function build_run_summary(manifest)
+    succeeded_tasks = Dict{String,Any}[]
+    failed_tasks = Dict{String,Any}[]
+    incomplete_tasks = Dict{String,Any}[]
+    missing_tasks = Dict{String,Any}[]
+
+    for task_manifest in manifest["tasks"]
+        status = task_status(task_manifest)
+        entry = report_task_entry(task_manifest, status)
+
+        if isnothing(status)
+            push!(missing_tasks, entry)
+        elseif get(status, "state", "") == "succeeded"
+            push!(succeeded_tasks, entry)
+        elseif get(status, "state", "") == "failed"
+            push!(failed_tasks, entry)
+        else
+            push!(incomplete_tasks, entry)
+        end
+    end
+
+    return Dict{String,Any}(
+        "run_id" => manifest["run_id"],
+        "generated_at" => run_summary_timestamp_utc(),
+        "manifest_path" => manifest["manifest_path"],
+        "total_tasks" => length(manifest["tasks"]),
+        "succeeded_count" => length(succeeded_tasks),
+        "failed_count" => length(failed_tasks),
+        "incomplete_count" => length(incomplete_tasks),
+        "missing_count" => length(missing_tasks),
+        "succeeded_tasks" => succeeded_tasks,
+        "failed_tasks" => failed_tasks,
+        "incomplete_tasks" => incomplete_tasks,
+        "missing_tasks" => missing_tasks,
+    )
+end
+
+function write_run_summary(manifest)
+    summary = build_run_summary(manifest)
+    summary_path = manifest["summary_path"]
+    mkpath(dirname(summary_path))
+    open(summary_path, "w") do io
+        TOML.print(io, summary)
+    end
+    return summary
+end
+
+function unsuccessful_task_count(summary)
+    return summary["failed_count"] + summary["incomplete_count"] + summary["missing_count"]
+end
 
 using Distributed
 using SlurmClusterManager
@@ -156,16 +247,52 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     end
 
     function run_task(task_manifest)
-        return with_task_log(task_manifest) do
-            run_task_body(task_manifest)
+        try
+            return with_task_log(task_manifest) do
+                result = run_task_body(task_manifest)
+                return Dict(
+                    "task_id" => task_manifest["id"],
+                    "family" => task_manifest["family"],
+                    "state" => "succeeded",
+                    "result" => result,
+                )
+            end
+        catch err
+            return Dict(
+                "task_id" => task_manifest["id"],
+                "family" => task_manifest["family"],
+                "state" => "failed",
+                "exception_text" => sprint(showerror, err),
+            )
         end
     end
 end
 
-light_results = pmap(run_task, LIGHT_MANIFEST_TASKS)
-
 const HEAVY_WORKER_COUNT = 1
-heavy_pool = WorkerPool(workers()[1:min(HEAVY_WORKER_COUNT, nworkers())])
-heavy_results = pmap(run_task, heavy_pool, HEAVY_MANIFEST_TASKS)
 
-results = vcat(light_results, heavy_results)
+function run_manifest_tasks()
+    results = Any[]
+    try
+        append!(results, pmap(run_task, LIGHT_MANIFEST_TASKS))
+
+        heavy_pool = WorkerPool(workers()[1:min(HEAVY_WORKER_COUNT, nworkers())])
+        append!(results, pmap(run_task, heavy_pool, HEAVY_MANIFEST_TASKS))
+    catch err
+        return results, err
+    end
+    return results, nothing
+end
+
+results, phase_error = run_manifest_tasks()
+
+summary = write_run_summary(manifest)
+@info "Wrote Slurm run summary" summary_path=manifest["summary_path"] succeeded=summary["succeeded_count"] failed=summary["failed_count"] incomplete=summary["incomplete_count"] missing=summary["missing_count"]
+
+if !isnothing(phase_error)
+    throw(phase_error)
+end
+
+unsuccessful = unsuccessful_task_count(summary)
+if unsuccessful > 0
+    error("Slurm run completed with $(unsuccessful) unsuccessful task(s); see $(manifest["summary_path"])")
+end
