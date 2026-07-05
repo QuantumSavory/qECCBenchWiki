@@ -17,6 +17,13 @@ julia> run_evaluations(CodeMetadata.code_metadata)
 
 If you want to run only some codes, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
 
+If you want to run only some decoders or setups, use `decoders` or `setups` filters. Filters can use the exact metadata entries or their display names:
+
+```julia
+run_evaluations(code_metadata; include=[CodeType], decoders=[TableDecoder])
+run_evaluations(code_metadata; include=[CodeType], decoders=["Table"], setups=["CommutationCheck"])
+```
+
 Optionally, if you want to specify a location (directory) for the generated database, you can use `run_evaluations(code_metadata; db_path="path/to/database")`.
 
 
