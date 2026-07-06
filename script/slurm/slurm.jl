@@ -66,6 +66,10 @@ function report_task_entry(task_manifest, status)
         "status_path" => task_manifest["status_path"],
     )
 
+    for key in ("decoder", "setup")
+        haskey(task_manifest, key) && (entry[key] = task_manifest[key])
+    end
+
     if isnothing(status)
         entry["state"] = "missing"
         return entry
@@ -79,6 +83,8 @@ function report_task_entry(task_manifest, status)
         "exception_text",
         "output_database_files",
         "db_filename",
+        "decoder",
+        "setup",
     )
         haskey(status, key) && (entry[key] = status[key])
     end
@@ -175,6 +181,10 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             "output_database_files" => output_database_files(task_manifest),
         )
 
+        for key in ("decoder", "setup")
+            haskey(task_manifest, key) && (status[key] = task_manifest[key])
+        end
+
         if !isnothing(finished_at)
             status["finished_at"] = finished_at
         end
@@ -250,20 +260,28 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
         try
             return with_task_log(task_manifest) do
                 result = run_task_body(task_manifest)
-                return Dict(
+                task_result = Dict(
                     "task_id" => task_manifest["id"],
                     "family" => task_manifest["family"],
                     "state" => "succeeded",
                     "result" => result,
                 )
+                for key in ("decoder", "setup")
+                    haskey(task_manifest, key) && (task_result[key] = task_manifest[key])
+                end
+                return task_result
             end
         catch err
-            return Dict(
+            task_result = Dict(
                 "task_id" => task_manifest["id"],
                 "family" => task_manifest["family"],
                 "state" => "failed",
                 "exception_text" => sprint(showerror, err),
             )
+            for key in ("decoder", "setup")
+                haskey(task_manifest, key) && (task_result[key] = task_manifest[key])
+            end
+            return task_result
         end
     end
 end
