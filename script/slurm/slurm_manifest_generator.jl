@@ -6,7 +6,7 @@ using Dates
 using TOML
 using UUIDs
 
-export build_slurm_manifest, default_run_id, write_slurm_manifest
+export build_slurm_manifest, default_run_id, expand_slurm_tasks, write_slurm_manifest
 
 timestamp_utc(t=now(UTC)) = Dates.format(t, dateformat"yyyy-mm-ddTHH:MM:SS") * "Z"
 default_run_id(t=now(UTC)) = "slurm_" * Dates.format(t, dateformat"yyyymmdd_HHMMSS")
@@ -30,6 +30,59 @@ function sanitize_task_id_part(value)
 end
 
 db_filename(uuid) = "db_$(uuid).sqlite"
+
+filter_items(filters::AbstractString) = (filters,)
+filter_items(filters::AbstractVector) = filters
+filter_items(filters::Tuple) = filters
+filter_items(filters) = (filters,)
+
+family_items(families::AbstractVector) = families
+family_items(families::Tuple) = families
+family_items(families) = (families,)
+
+function skip_redundant_prefix(value)
+    return chopprefix(chopprefix(string(value), "QuantumClifford.ECC."), "Main.")
+end
+
+function skip_redundant_suffix(value)
+    parts = split(string(value), "(")
+    fixed = [
+        chopsuffix(chopsuffix(part, "Decoder"), "ECCSetup")
+        for part in parts
+    ]
+    return join(fixed, "(")
+end
+
+function manifest_name(value)
+    if hasproperty(value, :f) && hasproperty(value, :kwargs)
+        f = manifest_name(getproperty(value, :f))
+        kwargs = getproperty(value, :kwargs)
+        return "$f($(join(["$key=$val" for (key, val) in pairs(kwargs)], ", ")))"
+    end
+
+    return skip_redundant_suffix(skip_redundant_prefix(value))
+end
+
+function matches_filter(entry, filter)
+    entry == filter && return true
+    return manifest_name(entry) == manifest_name(filter)
+end
+
+function filtered_entries(entries, filters)
+    isnothing(filters) && return entries
+    selected = filter_items(filters)
+    return [entry for entry in entries if any(filter -> matches_filter(entry, filter), selected)]
+end
+
+function family_name(family)
+    hasproperty(family, :code_name) && return string(getproperty(family, :code_name))
+
+    try
+        return string(nameof(family))
+    catch
+        return string(family)
+    end
+end
 
 function get_task_field(task, field::Symbol, default=nothing)
     haskey(task, field) && return task[field]
@@ -62,6 +115,41 @@ end
 
 function normalized_task(task::NamedTuple)
     return normalized_task(Dict{Symbol,Any}(pairs(task)))
+end
+
+function expand_slurm_tasks(code_metadata, families; decoders=nothing, setups=nothing)
+    requested = Symbol.(family_items(families))
+    requested_set = Set(requested)
+    expanded = Dict{String,Any}[]
+    metadata_by_family = Dict{Symbol,Any}()
+
+    for (codetype, metadata) in code_metadata
+        family = family_name(codetype)
+        family_symbol = Symbol(family)
+        family_symbol in requested_set || continue
+        metadata_by_family[family_symbol] = (family, metadata)
+    end
+
+    missing = setdiff(requested_set, Set(keys(metadata_by_family)))
+    !isempty(missing) && error("Slurm manifest task expansion requested unknown family/families: $(join(sort!(string.(collect(missing))), ", "))")
+
+    for family_symbol in requested
+        family, metadata = metadata_by_family[family_symbol]
+        family_decoders = filtered_entries(metadata[:decoders], decoders)
+        family_setups = filtered_entries(metadata[:setups], setups)
+
+        for decoder in family_decoders
+            for setup in family_setups
+                push!(expanded, Dict(
+                    "family" => family,
+                    "decoder" => manifest_name(decoder),
+                    "setup" => manifest_name(setup),
+                ))
+            end
+        end
+    end
+
+    return expanded
 end
 
 function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_run_id())

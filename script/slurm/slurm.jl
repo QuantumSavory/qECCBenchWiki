@@ -15,9 +15,11 @@ Pkg.activate(pwd())
 
 include(joinpath(pwd(), "script/slurm/slurm_manifest_generator.jl"))
 
-using .SlurmManifestGenerator: write_slurm_manifest
+using .SlurmManifestGenerator: expand_slurm_tasks, write_slurm_manifest
 using Dates
 using TOML
+
+include(joinpath(pwd(), "wiki_database_passes.jl"))
 
 const LIGHT_TASKS = [
     :Gottesman,
@@ -36,12 +38,13 @@ const HEAVY_TASKS = [
     :Triangular666,
 ]
 
-manifest = write_slurm_manifest(vcat(LIGHT_TASKS, HEAVY_TASKS))
+manifest_task_descriptors = expand_slurm_tasks(CodeMetadata.code_metadata, vcat(LIGHT_TASKS, HEAVY_TASKS))
+manifest = write_slurm_manifest(manifest_task_descriptors)
 @info "Wrote Slurm manifest" manifest_path=manifest["manifest_path"] run_dir=manifest["run_dir"]
 
 function manifest_tasks(manifest, task_names)
-    task_by_family = Dict(Symbol(task["family"]) => task for task in manifest["tasks"])
-    return [task_by_family[task_name] for task_name in task_names]
+    requested = Set(Symbol.(task_names))
+    return [task for task in manifest["tasks"] if Symbol(task["family"]) in requested]
 end
 
 const LIGHT_MANIFEST_TASKS = manifest_tasks(manifest, LIGHT_TASKS)
@@ -156,7 +159,9 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     using TerminalLoggers
     using TOML
 
-    include(joinpath(pwd(), "wiki_database_passes.jl"))
+    if myid() != 1
+        include(joinpath(pwd(), "wiki_database_passes.jl"))
+    end
 
     const SLURM_DB_DIR = $MANIFEST_DB_DIR
 
@@ -229,16 +234,29 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
         end
     end
 
+    function task_label(task_manifest)
+        parts = String[string(task_manifest["family"])]
+        for key in ("decoder", "setup")
+            haskey(task_manifest, key) && push!(parts, string(task_manifest[key]))
+        end
+        return join(parts, " / ")
+    end
+
     function run_task_body(task_manifest)
         task_name = Symbol(task_manifest["family"])
         task = getproperty(CodeMetadata, task_name)
-        @info "Running task: $task_name on $(myid())"
+        decoder_filter = haskey(task_manifest, "decoder") ? [task_manifest["decoder"]] : nothing
+        setup_filter = haskey(task_manifest, "setup") ? [task_manifest["setup"]] : nothing
+        label = task_label(task_manifest)
+        @info "Running task: $label on $(myid())"
         started_at = timestamp_utc()
         write_task_status(task_manifest; state="running", started_at=started_at)
         try
             run_evaluations(
                 CodeMetadata.code_metadata;
                 include=[task],
+                decoders=decoder_filter,
+                setups=setup_filter,
                 db_path=SLURM_DB_DIR,
                 db_filename=task_manifest["db_filename"],
             )
@@ -253,7 +271,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             )
             rethrow()
         end
-        return "Result for $(task_name)"
+        return "Result for $(label)"
     end
 
     function run_task(task_manifest)
