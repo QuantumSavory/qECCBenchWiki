@@ -38,6 +38,29 @@ const HEAVY_TASKS = [
     :Triangular666,
 ]
 
+# Slurm evaluation model
+#
+# The manifest below expands each selected code family into one task for every
+# decoder/setup combination present in CodeMetadata.code_metadata. In other
+# words, the distributed unit is:
+#
+#     code family/type + decoder + setup
+#
+# not just a family, and not each individual parameterized code instance inside
+# metadata[:family]. Each task gets its own database, log, and status file. When
+# the task runs, run_task_body passes the manifest decoder/setup fields back into
+# run_evaluations as filters, so the task evaluates all instances of that family
+# for exactly that decoder/setup pair.
+#
+# This is usually the right granularity for Slurm: it improves load balancing,
+# makes failures smaller and easier to retry, and keeps logs/status reports tied
+# to the failing decoder/setup pair instead of rerunning an entire family. The
+# cost is extra scheduling and Julia task overhead, plus possible repeated setup
+# work such as reusable decoder construction that would otherwise be shared when
+# several setups are evaluated in one family-level call. For very small families
+# the old family-level batching can be cheaper; for heavy or uneven workloads,
+# the finer split should normally finish sooner and produce more actionable
+# failure artifacts.
 manifest_task_descriptors = expand_slurm_tasks(CodeMetadata.code_metadata, vcat(LIGHT_TASKS, HEAVY_TASKS))
 manifest = write_slurm_manifest(manifest_task_descriptors)
 @info "Wrote Slurm manifest" manifest_path=manifest["manifest_path"] run_dir=manifest["run_dir"]
@@ -54,6 +77,30 @@ const MANIFEST_DB_DIR = manifest["db_dir"]
 const RUN_SUMMARY_TIMESTAMP_FORMAT = Dates.DateFormat("yyyy-mm-ddTHH:MM:SS")
 
 run_summary_timestamp_utc(t=Dates.now(Dates.UTC)) = Dates.format(t, RUN_SUMMARY_TIMESTAMP_FORMAT) * "Z"
+
+function parse_run_summary_timestamp(timestamp)
+    return Dates.DateTime(chopsuffix(string(timestamp), "Z"), RUN_SUMMARY_TIMESTAMP_FORMAT)
+end
+
+function maybe_parse_run_summary_timestamp(timestamp)
+    try
+        return parse_run_summary_timestamp(timestamp)
+    catch
+        return nothing
+    end
+end
+
+function duration_seconds(started_at, finished_at)
+    return Dates.value(parse_run_summary_timestamp(finished_at) - parse_run_summary_timestamp(started_at)) / 1000
+end
+
+function maybe_duration_seconds(started_at, finished_at)
+    try
+        return duration_seconds(started_at, finished_at)
+    catch
+        return nothing
+    end
+end
 
 function task_status(task_manifest)
     status_path = task_manifest["status_path"]
@@ -88,11 +135,105 @@ function report_task_entry(task_manifest, status)
         "db_filename",
         "decoder",
         "setup",
+        "duration_seconds",
     )
         haskey(status, key) && (entry[key] = status[key])
     end
 
+    if !haskey(entry, "duration_seconds") && haskey(entry, "started_at") && haskey(entry, "finished_at")
+        duration = maybe_duration_seconds(entry["started_at"], entry["finished_at"])
+        !isnothing(duration) && (entry["duration_seconds"] = duration)
+    end
+
     return entry
+end
+
+function timed_task_entries(entries)
+    return [
+        entry for entry in entries
+        if haskey(entry, "duration_seconds")
+    ]
+end
+
+function aggregate_duration!(aggregates, key, duration)
+    group = string(key)
+    aggregate = get!(aggregates, group) do
+        Dict{String,Any}(
+            "task_count" => 0,
+            "total_duration_seconds" => 0.0,
+            "max_duration_seconds" => 0.0,
+        )
+    end
+    aggregate["task_count"] += 1
+    aggregate["total_duration_seconds"] += duration
+    aggregate["max_duration_seconds"] = max(aggregate["max_duration_seconds"], duration)
+    return aggregate
+end
+
+function duration_groups(entries, source_key, output_key)
+    aggregates = Dict{String,Any}()
+
+    for entry in entries
+        haskey(entry, source_key) || continue
+        duration = Float64(entry["duration_seconds"])
+        aggregate_duration!(aggregates, entry[source_key], duration)
+    end
+
+    return [
+        merge(Dict{String,Any}(output_key => key), aggregate)
+        for (key, aggregate) in sort(collect(aggregates); by=first)
+    ]
+end
+
+function slowest_task_entries(entries; limit=10)
+    sorted_entries = sort(entries; by=entry -> Float64(entry["duration_seconds"]), rev=true)
+
+    return [
+        Dict{String,Any}(
+            key => entry[key]
+            for key in ("task_id", "family", "decoder", "setup", "state", "duration_seconds")
+            if haskey(entry, key)
+        )
+        for entry in sorted_entries[1:min(limit, length(sorted_entries))]
+    ]
+end
+
+function timing_summary(entries)
+    started_timestamps = [
+        parse_run_summary_timestamp(entry["started_at"])
+        for entry in entries
+        if haskey(entry, "started_at") && !isnothing(maybe_parse_run_summary_timestamp(entry["started_at"]))
+    ]
+    finished_timestamps = [
+        parse_run_summary_timestamp(entry["finished_at"])
+        for entry in entries
+        if haskey(entry, "finished_at") && !isnothing(maybe_parse_run_summary_timestamp(entry["finished_at"]))
+    ]
+    timed_entries = timed_task_entries(entries)
+
+    summary = Dict{String,Any}(
+        "total_task_duration_seconds" => sum(Float64(entry["duration_seconds"]) for entry in timed_entries; init=0.0),
+        "slowest_tasks" => slowest_task_entries(timed_entries),
+        "duration_by_family" => duration_groups(timed_entries, "family", "family"),
+        "duration_by_decoder" => duration_groups(timed_entries, "decoder", "decoder"),
+        "duration_by_setup" => duration_groups(timed_entries, "setup", "setup"),
+    )
+
+    if !isempty(started_timestamps)
+        run_started_at = minimum(started_timestamps)
+        summary["run_started_at"] = Dates.format(run_started_at, RUN_SUMMARY_TIMESTAMP_FORMAT) * "Z"
+    end
+
+    if !isempty(finished_timestamps)
+        run_finished_at = maximum(finished_timestamps)
+        summary["run_finished_at"] = Dates.format(run_finished_at, RUN_SUMMARY_TIMESTAMP_FORMAT) * "Z"
+    end
+
+    if haskey(summary, "run_started_at") && haskey(summary, "run_finished_at")
+        summary["run_wall_time_seconds"] = duration_seconds(summary["run_started_at"], summary["run_finished_at"])
+    end
+
+    return summary
 end
 
 function build_run_summary(manifest)
@@ -116,7 +257,8 @@ function build_run_summary(manifest)
         end
     end
 
-    return Dict{String,Any}(
+    all_tasks = vcat(succeeded_tasks, failed_tasks, incomplete_tasks, missing_tasks)
+    summary = Dict{String,Any}(
         "run_id" => manifest["run_id"],
         "generated_at" => run_summary_timestamp_utc(),
         "manifest_path" => manifest["manifest_path"],
@@ -130,6 +272,9 @@ function build_run_summary(manifest)
         "incomplete_tasks" => incomplete_tasks,
         "missing_tasks" => missing_tasks,
     )
+
+    merge!(summary, timing_summary(all_tasks))
+    return summary
 end
 
 function write_run_summary(manifest)
@@ -169,6 +314,14 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 
     timestamp_utc(t=Dates.now(Dates.UTC)) = Dates.format(t, SLURM_TIMESTAMP_FORMAT) * "Z"
 
+    function slurm_timestamp(timestamp)
+        return Dates.DateTime(chopsuffix(string(timestamp), "Z"), SLURM_TIMESTAMP_FORMAT)
+    end
+
+    function slurm_duration_seconds(started_at, finished_at)
+        return Dates.value(slurm_timestamp(finished_at) - slurm_timestamp(started_at)) / 1000
+    end
+
     function output_database_files(task_manifest)
         db_path = task_manifest["db_path"]
         return isfile(db_path) ? [db_path] : String[]
@@ -192,6 +345,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 
         if !isnothing(finished_at)
             status["finished_at"] = finished_at
+            status["duration_seconds"] = slurm_duration_seconds(started_at, finished_at)
         end
 
         if !isnothing(exception_text)
