@@ -15,9 +15,23 @@ julia> include("wiki_database_passes.jl")
 julia> run_evaluations(CodeMetadata.code_metadata)
 ```
 
-If you want to run only some codes, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
+If you want to run only some code families, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
 
-Optionally, if you want to specify a location (directory) for the generated database, you can use `run_evaluations(code_metadata; database_path="path/to/database")`.
+If you want to run only some instances within a code family, use `code_instances`. Filters can use the metadata argument tuple or the display name:
+
+```julia
+run_evaluations(code_metadata; include=[TwoBlockGroupAlgebra], code_instances=[(:A1, :B1)])
+run_evaluations(code_metadata; include=[TwoBlockGroupAlgebra], code_instances=["TwoBlockGroupAlgebra(A1, B1)"])
+```
+
+If you want to run only some decoders or setups, use `decoders` or `setups` filters. Filters can use the exact metadata entries or their display names:
+
+```julia
+run_evaluations(code_metadata; include=[CodeType], decoders=[TableDecoder])
+run_evaluations(code_metadata; include=[CodeType], decoders=["Table"], setups=["CommutationCheck"])
+```
+
+Optionally, if you want to specify a location (directory) for the generated database, you can use `run_evaluations(code_metadata; db_path="path/to/database")`.
 
 
 ## To merge evaluation results from multiple runs
@@ -92,14 +106,25 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
     ```
 
 ### Running Benchmarks
-1. You can create a Julia script that runs the benchmarks for a specific set of codes and decoders as submit it as a Slurm job. In your script, you can call `run_evaluations` with the appropriate parameters to specify the output directory and set `worker_db` to `true` so the results are written to the database from each worker process. For example:
-    ```julia
-    run_evaluations(CodeMetadata.code_metadata; output_path="path/to/results", worker_db=true)`
+1. Run the Slurm entrypoint from the repository root. It writes a run manifest under `runs/slurm/<run_id>/`, assigns one manifest-owned database filename per task, and passes those filenames into `run_evaluations`.
+
+    The current Slurm script keeps light code families batched by `family + decoder + setup`, and splits heavy code families by `family + code_instance + decoder + setup`. This keeps small tasks from creating unnecessary scheduler overhead while making the expensive heavy tasks easier to balance and retry.
+
+    ```bash
+    sbatch -N 3 -n 9 -t 06:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
     ```
-2. To merge your results from multiple runs, you can use the `join_results` function from the `DBJoinHelper` module. This function takes a directory containing multiple SQLite databases and merges them into a single database. For example:
+
+    After all task phases finish, inspect `runs/slurm/<run_id>/summary.toml` for the run-level succeeded, failed, incomplete, and missing-status task lists. The timing summary includes duration grouped by family, code instance, decoder, and setup.
+
+    For custom scripts, pass an explicit database directory and filename when you want a run to write to a specific SQLite file:
 
     ```julia
-    include("_0.helpers_and_metadata/db_join_helper.jl")
-    using .DBJoinHelper: join_results
-    join_results("path/to/results"; output_path="path/to/merged_results.sqlite")
+    run_evaluations(CodeMetadata.code_metadata; db_path="path/to/results", db_filename="db_task.sqlite")
     ```
+2. To merge one Slurm run's per-task databases into a single run-level database, pass the run directory to the Slurm results script:
+
+    ```bash
+    julia --project=. script/slurm/get_results.jl runs/slurm/<run_id>
+    ```
+
+    This reads `runs/slurm/<run_id>/db/*.sqlite` and writes `runs/slurm/<run_id>/results.sqlite`.
