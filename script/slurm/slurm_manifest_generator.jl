@@ -11,6 +11,8 @@ export build_slurm_manifest, default_run_id, expand_slurm_tasks, write_slurm_man
 timestamp_utc(t=now(UTC)) = Dates.format(t, dateformat"yyyy-mm-ddTHH:MM:SS") * "Z"
 default_run_id(t=now(UTC)) = "slurm_" * Dates.format(t, dateformat"yyyymmdd_HHMMSS")
 
+const TASK_DETAIL_FIELDS = ("code_instance", "decoder", "setup")
+
 function task_id(index, family)
     return "task_$(lpad(string(index), 3, '0'))_$(family)"
 end
@@ -23,8 +25,30 @@ function task_id(index, family, decoder, setup)
     return "task_$(lpad(string(index), 3, '0'))_$(suffix)"
 end
 
+function task_id(index, family, code_instance, decoder, setup)
+    parts = String[string(family)]
+    !isnothing(code_instance) && push!(parts, string(code_instance))
+    !isnothing(decoder) && push!(parts, string(decoder))
+    !isnothing(setup) && push!(parts, string(setup))
+    suffix = join(sanitize_task_id_part.(parts), "_")
+    return "task_$(lpad(string(index), 3, '0'))_$(suffix)"
+end
+
 function sanitize_task_id_part(value)
-    sanitized = replace(string(value), r"[^A-Za-z0-9]+" => "_")
+    normalized = replace(
+        string(value),
+        "₀" => "0",
+        "₁" => "1",
+        "₂" => "2",
+        "₃" => "3",
+        "₄" => "4",
+        "₅" => "5",
+        "₆" => "6",
+        "₇" => "7",
+        "₈" => "8",
+        "₉" => "9",
+    )
+    sanitized = replace(normalized, r"[^A-Za-z0-9]+" => "_")
     sanitized = replace(sanitized, r"^_+|_+$" => "")
     return isempty(sanitized) ? "task" : sanitized
 end
@@ -84,6 +108,11 @@ function family_name(family)
     end
 end
 
+function instance_name(family, instance_args)
+    args = instance_args isa Tuple ? instance_args : (instance_args,)
+    return "$(family)($(join(string.(args), ", ")))"
+end
+
 function get_task_field(task, field::Symbol, default=nothing)
     haskey(task, field) && return task[field]
     string_field = string(field)
@@ -105,10 +134,10 @@ function normalized_task(task::AbstractDict)
         "family" => string(family),
     )
 
-    decoder = get_task_field(task, :decoder)
-    setup = get_task_field(task, :setup)
-    !isnothing(decoder) && (normalized["decoder"] = string(decoder))
-    !isnothing(setup) && (normalized["setup"] = string(setup))
+    for field in TASK_DETAIL_FIELDS
+        value = get_task_field(task, Symbol(field))
+        !isnothing(value) && (normalized[field] = string(value))
+    end
 
     return normalized
 end
@@ -117,7 +146,7 @@ function normalized_task(task::NamedTuple)
     return normalized_task(Dict{Symbol,Any}(pairs(task)))
 end
 
-function expand_slurm_tasks(code_metadata, families; decoders=nothing, setups=nothing)
+function expand_slurm_tasks(code_metadata, families; code_instances=nothing, decoders=nothing, setups=nothing, split_code_instances=false)
     requested = Symbol.(family_items(families))
     requested_set = Set(requested)
     expanded = Dict{String,Any}[]
@@ -135,16 +164,35 @@ function expand_slurm_tasks(code_metadata, families; decoders=nothing, setups=no
 
     for family_symbol in requested
         family, metadata = metadata_by_family[family_symbol]
+        family_code_instances = filtered_entries(
+            [instance_name(family, instance_args) for instance_args in metadata[:family]],
+            code_instances,
+        )
         family_decoders = filtered_entries(metadata[:decoders], decoders)
         family_setups = filtered_entries(metadata[:setups], setups)
 
-        for decoder in family_decoders
-            for setup in family_setups
-                push!(expanded, Dict(
-                    "family" => family,
-                    "decoder" => manifest_name(decoder),
-                    "setup" => manifest_name(setup),
-                ))
+        if split_code_instances
+            for code_instance in family_code_instances
+                for decoder in family_decoders
+                    for setup in family_setups
+                        push!(expanded, Dict(
+                            "family" => family,
+                            "code_instance" => code_instance,
+                            "decoder" => manifest_name(decoder),
+                            "setup" => manifest_name(setup),
+                        ))
+                    end
+                end
+            end
+        else
+            for decoder in family_decoders
+                for setup in family_setups
+                    push!(expanded, Dict(
+                        "family" => family,
+                        "decoder" => manifest_name(decoder),
+                        "setup" => manifest_name(setup),
+                    ))
+                end
             end
         end
     end
@@ -164,9 +212,10 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
     for (index, task_name) in enumerate(task_names)
         task = normalized_task(task_name)
         family = task["family"]
+        code_instance = get(task, "code_instance", nothing)
         decoder = get(task, "decoder", nothing)
         setup = get(task, "setup", nothing)
-        id = isnothing(decoder) && isnothing(setup) ? task_id(index, family) : task_id(index, family, decoder, setup)
+        id = all(isnothing, (code_instance, decoder, setup)) ? task_id(index, family) : task_id(index, family, code_instance, decoder, setup)
         uuid = string(uuid4())
         filename = db_filename(uuid)
         task_manifest = Dict(
@@ -180,8 +229,9 @@ function build_slurm_manifest(task_names; run_root="runs/slurm", run_id=default_
             "status_path" => joinpath(status_dir, "$(id).toml"),
         )
 
-        haskey(task, "decoder") && (task_manifest["decoder"] = task["decoder"])
-        haskey(task, "setup") && (task_manifest["setup"] = task["setup"])
+        for field in TASK_DETAIL_FIELDS
+            haskey(task, field) && (task_manifest[field] = task[field])
+        end
 
         push!(tasks, task_manifest)
     end

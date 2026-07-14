@@ -15,7 +15,14 @@ julia> include("wiki_database_passes.jl")
 julia> run_evaluations(CodeMetadata.code_metadata)
 ```
 
-If you want to run only some codes, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
+If you want to run only some code families, e.g. the code family `CodeType`, you can use `run_evaluations(code_metadata; include=[CodeType])`.
+
+If you want to run only some instances within a code family, use `code_instances`. Filters can use the metadata argument tuple or the display name:
+
+```julia
+run_evaluations(code_metadata; include=[TwoBlockGroupAlgebra], code_instances=[(:A1, :B1)])
+run_evaluations(code_metadata; include=[TwoBlockGroupAlgebra], code_instances=["TwoBlockGroupAlgebra(A1, B1)"])
+```
 
 If you want to run only some decoders or setups, use `decoders` or `setups` filters. Filters can use the exact metadata entries or their display names:
 
@@ -101,11 +108,13 @@ Running the benchmarks on a Slurm cluster can be more efficient if you want to p
 ### Running Benchmarks
 1. Run the Slurm entrypoint from the repository root. It writes a run manifest under `runs/slurm/<run_id>/`, assigns one manifest-owned database filename per task, and passes those filenames into `run_evaluations`.
 
+    The current Slurm script keeps light code families batched by `family + decoder + setup`, and splits heavy code families by `family + code_instance + decoder + setup`. This keeps small tasks from creating unnecessary scheduler overhead while making the expensive heavy tasks easier to balance and retry.
+
     ```bash
-    sbatch -N 4 -n 12 -t 01:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
+    sbatch -N 3 -n 9 -t 06:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
     ```
 
-    After all task phases finish, inspect `runs/slurm/<run_id>/summary.toml` for the run-level succeeded, failed, incomplete, and missing-status task lists.
+    After all task phases finish, inspect `runs/slurm/<run_id>/summary.toml` for the run-level succeeded, failed, incomplete, and missing-status task lists. The timing summary includes duration grouped by family, code instance, decoder, and setup.
 
     For custom scripts, pass an explicit database directory and filename when you want a run to write to a specific SQLite file:
 

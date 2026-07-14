@@ -3,11 +3,11 @@
 # This is the working version of our script
 
 # Run with a command like:
-# sbatch -N 4 -n 12 -t 01:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
+# sbatch -N 3 -n 9 -t 06:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
 # Should be run from repo root!
 
 # Do instatiate in julia REPL
-ENV["ECCBENCHWIKI_QUICKCHECK"]="true"
+#ENV["ECCBENCHWIKI_QUICKCHECK"]="true"
 
 using Pkg
 
@@ -38,30 +38,33 @@ const HEAVY_TASKS = [
     :Triangular666,
 ]
 
+const TASK_DETAIL_FIELDS = ("code_instance", "decoder", "setup")
+
 # Slurm evaluation model
 #
-# The manifest below expands each selected code family into one task for every
-# decoder/setup combination present in CodeMetadata.code_metadata. In other
-# words, the distributed unit is:
+# The manifest below expands light code families into one task for every
+# decoder/setup combination, and heavy code families into one task for every
+# code instance/decoder/setup combination present in CodeMetadata.code_metadata.
+# In other words, the distributed unit is:
 #
-#     code family/type + decoder + setup
+#     light: code family/type + decoder + setup
+#     heavy: code family/type + code instance + decoder + setup
 #
-# not just a family, and not each individual parameterized code instance inside
-# metadata[:family]. Each task gets its own database, log, and status file. When
-# the task runs, run_task_body passes the manifest decoder/setup fields back into
-# run_evaluations as filters, so the task evaluates all instances of that family
-# for exactly that decoder/setup pair.
+# Each task gets its own database, log, and status file. When the task runs,
+# run_task_body passes the manifest code_instance/decoder/setup fields back into
+# run_evaluations as filters, so the task evaluates exactly that requested slice.
 #
 # This is usually the right granularity for Slurm: it improves load balancing,
 # makes failures smaller and easier to retry, and keeps logs/status reports tied
-# to the failing decoder/setup pair instead of rerunning an entire family. The
-# cost is extra scheduling and Julia task overhead, plus possible repeated setup
-# work such as reusable decoder construction that would otherwise be shared when
-# several setups are evaluated in one family-level call. For very small families
-# the old family-level batching can be cheaper; for heavy or uneven workloads,
-# the finer split should normally finish sooner and produce more actionable
-# failure artifacts.
-manifest_task_descriptors = expand_slurm_tasks(CodeMetadata.code_metadata, vcat(LIGHT_TASKS, HEAVY_TASKS))
+# to the failing task slice instead of rerunning an entire family. The cost is
+# extra scheduling and Julia task overhead. For very small families the old
+# decoder/setup batching can be cheaper; for heavy or uneven workloads, the
+# finer split should normally finish sooner and produce more actionable failure
+# artifacts.
+manifest_task_descriptors = vcat(
+    expand_slurm_tasks(CodeMetadata.code_metadata, LIGHT_TASKS),
+    expand_slurm_tasks(CodeMetadata.code_metadata, HEAVY_TASKS; split_code_instances=true),
+)
 manifest = write_slurm_manifest(manifest_task_descriptors)
 @info "Wrote Slurm manifest" manifest_path=manifest["manifest_path"] run_dir=manifest["run_dir"]
 
@@ -116,7 +119,7 @@ function report_task_entry(task_manifest, status)
         "status_path" => task_manifest["status_path"],
     )
 
-    for key in ("decoder", "setup")
+    for key in TASK_DETAIL_FIELDS
         haskey(task_manifest, key) && (entry[key] = task_manifest[key])
     end
 
@@ -133,6 +136,7 @@ function report_task_entry(task_manifest, status)
         "exception_text",
         "output_database_files",
         "db_filename",
+        "code_instance",
         "decoder",
         "setup",
         "duration_seconds",
@@ -191,7 +195,7 @@ function slowest_task_entries(entries; limit=10)
     return [
         Dict{String,Any}(
             key => entry[key]
-            for key in ("task_id", "family", "decoder", "setup", "state", "duration_seconds")
+            for key in ("task_id", "family", "code_instance", "decoder", "setup", "state", "duration_seconds")
             if haskey(entry, key)
         )
         for entry in sorted_entries[1:min(limit, length(sorted_entries))]
@@ -215,6 +219,7 @@ function timing_summary(entries)
         "total_task_duration_seconds" => sum(Float64(entry["duration_seconds"]) for entry in timed_entries; init=0.0),
         "slowest_tasks" => slowest_task_entries(timed_entries),
         "duration_by_family" => duration_groups(timed_entries, "family", "family"),
+        "duration_by_code_instance" => duration_groups(timed_entries, "code_instance", "code_instance"),
         "duration_by_decoder" => duration_groups(timed_entries, "decoder", "decoder"),
         "duration_by_setup" => duration_groups(timed_entries, "setup", "setup"),
     )
@@ -309,6 +314,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     end
 
     const SLURM_DB_DIR = $MANIFEST_DB_DIR
+    const SLURM_TASK_DETAIL_FIELDS = $TASK_DETAIL_FIELDS
 
     const SLURM_TIMESTAMP_FORMAT = Dates.DateFormat("yyyy-mm-ddTHH:MM:SS")
 
@@ -339,7 +345,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             "output_database_files" => output_database_files(task_manifest),
         )
 
-        for key in ("decoder", "setup")
+        for key in SLURM_TASK_DETAIL_FIELDS
             haskey(task_manifest, key) && (status[key] = task_manifest[key])
         end
 
@@ -390,7 +396,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
 
     function task_label(task_manifest)
         parts = String[string(task_manifest["family"])]
-        for key in ("decoder", "setup")
+        for key in SLURM_TASK_DETAIL_FIELDS
             haskey(task_manifest, key) && push!(parts, string(task_manifest[key]))
         end
         return join(parts, " / ")
@@ -399,6 +405,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     function run_task_body(task_manifest)
         task_name = Symbol(task_manifest["family"])
         task = getproperty(CodeMetadata, task_name)
+        code_instance_filter = haskey(task_manifest, "code_instance") ? [task_manifest["code_instance"]] : nothing
         decoder_filter = haskey(task_manifest, "decoder") ? [task_manifest["decoder"]] : nothing
         setup_filter = haskey(task_manifest, "setup") ? [task_manifest["setup"]] : nothing
         label = task_label(task_manifest)
@@ -409,6 +416,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
             run_evaluations(
                 CodeMetadata.code_metadata;
                 include=[task],
+                code_instances=code_instance_filter,
                 decoders=decoder_filter,
                 setups=setup_filter,
                 db_path=SLURM_DB_DIR,
@@ -438,7 +446,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
                     "state" => "succeeded",
                     "result" => result,
                 )
-                for key in ("decoder", "setup")
+                for key in SLURM_TASK_DETAIL_FIELDS
                     haskey(task_manifest, key) && (task_result[key] = task_manifest[key])
                 end
                 return task_result
@@ -450,7 +458,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
                 "state" => "failed",
                 "exception_text" => sprint(showerror, err),
             )
-            for key in ("decoder", "setup")
+            for key in SLURM_TASK_DETAIL_FIELDS
                 haskey(task_manifest, key) && (task_result[key] = task_manifest[key])
             end
             return task_result
@@ -458,7 +466,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     end
 end
 
-const HEAVY_WORKER_COUNT = 1
+const HEAVY_WORKER_COUNT = 5
 
 function run_manifest_tasks()
     results = Any[]
