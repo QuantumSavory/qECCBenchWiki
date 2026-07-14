@@ -3,10 +3,10 @@
 # This is the working version of our script
 
 # Run with a command like:
-# sbatch -N 3 -n 9 -t 06:00:00 --mem-per-cpu=8g script/slurm/slurm.jl
+# sbatch -N 3 -n 9 -t 06:00:00 --mem-per-cpu=10g script/slurm/slurm.jl
 # Should be run from repo root!
 
-# Do instatiate in julia REPL
+# Do instantiate in julia REPL
 #ENV["ECCBENCHWIKI_QUICKCHECK"]="true"
 
 using Pkg
@@ -466,7 +466,7 @@ addprocs(SlurmManager(), exeflags="--project=$(pwd())")
     end
 end
 
-const HEAVY_WORKER_COUNT = 5
+const HEAVY_WORKER_COUNT = 7
 
 function run_manifest_tasks()
     results = Any[]
