@@ -18,10 +18,12 @@ using .CodeMetadata: code_metadata
 using .Helpers: typenameof
 
 include("_1.code_benchmark_pass/benchmark.jl")
+include("_2.markdown_generation_pass/artifacts.jl")
 include("_2.markdown_generation_pass/markdown.jl")
 include("_2.markdown_generation_pass/figures.jl")
 
 using .CodeBenchmark: evaluate_codes_decoders_setups
+using .CodeArtifacts: prep_artifacts
 using .CodeFigures: prep_figures
 using .CodeMarkdown: prep_markdown
 
@@ -102,8 +104,9 @@ function prep_folders(code_metadata)
     end
 end
 
-function prep_everything(code_metadata; plot=true, markdown=true)
+function prep_everything(code_metadata; plot=true, artifacts=true, markdown=true)
     prep_folders(code_metadata)
     plot && prep_figures(code_metadata)
+    artifacts && prep_artifacts(code_metadata)
     markdown && prep_markdown(code_metadata)
 end

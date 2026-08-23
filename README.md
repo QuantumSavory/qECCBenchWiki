@@ -43,12 +43,21 @@ include("_0.helpers_and_metadata/db_join_helper.jl")
 using .DBJoinHelper: join_results
 join_results("path/to/results"; output_path="path/to/merged_results.sqlite")
 ```
-## To generate plots and markdown entries
+## To generate plots, downloadable artifacts, and markdown entries
 
 ```
 julia> include("wiki_database_passes.jl")
 julia> prep_everything(CodeMetadata.code_metadata)
 ```
+
+If you only want to regenerate downloadable parity-check artifacts and markdown links without rerunning plots:
+
+```
+julia> include("wiki_database_passes.jl")
+julia> prep_everything(CodeMetadata.code_metadata; plot=false, artifacts=true, markdown=true)
+```
+
+The artifact pass writes downloads under `codes/<CodeFamily>/artifacts/<InstanceName>/`, including Matrix Market `.mtx` files, a MATLAB `.mat` bundle, a text parity-check dump, and a `manifest.toml`.
 
 ## To generate the website for local viewing
 
@@ -65,7 +74,7 @@ This is a Franklin.jl static website, together with the following extra passes f
 
 - `_0.helpers_and_metadata` - the base metadata about codes and decoders as well as some low-level helper functions for working with that metadata and the sqlite database of results
 - `_1.code_benchmark_pass` - for running benchmarks and storing the performance data to the database
-- `_2.markdown_generation_pass` - for reading the database and creating figures and raw markdown pages
+- `_2.markdown_generation_pass` - for reading the database and creating figures, downloadable parity-check artifacts, and raw markdown pages
 - `wiki_database_passes.jl` - all of the functionality necessary for running the aforementioned capabilities
 - `codes` - where the generated static website sources are kept
 - `database` - where the database of benchmarks is stored (in `sqlite` as master format, and a few other formats for convenient downloading)

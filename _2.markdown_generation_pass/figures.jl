@@ -8,74 +8,254 @@ using QuantumClifford.ECC: TableDecoder, parity_checks, iscss, parity_matrix_z, 
 using ..Helpers: logrange, instancenameof, skipredundantfix, typenameof, CircBuffer
 using ..DBHelpers: dbrow, dbnarray, dbrow!
 
-skipzeronan(xs) = (x for x in xs if x!=0 && !isnan(x))
+const CIRCUIT_QUBIT_LIMIT = 10
+const SHOR_MAX_TABLE_CELLS = 2500
+
+ispositivefinite(x) = x > 0 && isfinite(x)
+skipzeronan(xs) = (x for x in xs if ispositivefinite(x))
+plottable_log_rate(x) = ispositivefinite(x) ? x : NaN
+
+function save_circuit_plot(make_circuit, path, code, circuit_name; max_table_cells=nothing)
+    rm(path; force=true)
+
+    try
+        circuit = make_circuit()
+        if !isnothing(max_table_cells)
+            table_cells = length(circuit2table(circuit).table)
+            if table_cells > max_table_cells
+                @info "$(code) skipped $(circuit_name): diagram has $(table_cells) table cells (limit: $(max_table_cells))"
+                return false
+            end
+        end
+
+        savecircuit(circuit, path)
+        return true
+    catch err
+        @warn "$(code) failed to plot $(circuit_name)" exception=(err, catch_backtrace())
+        return false
+    end
+end
+
+function prep_code_circuits(code, codetypename)
+    instance_name = instancenameof(code)
+    encoding_path = "codes/$(codetypename)/$(instance_name)_encoding.png"
+    naive_syndrome_path = "codes/$(codetypename)/$(instance_name)_naive_syndrome.png"
+    shor_syndrome_path = "codes/$(codetypename)/$(instance_name)_shor_syndrome.png"
+
+    for path in (encoding_path, naive_syndrome_path, shor_syndrome_path)
+        rm(path; force=true)
+    end
+
+    code_n(code) <= CIRCUIT_QUBIT_LIMIT || return (encoding=false, naive_syndrome=false, shor_syndrome=false)
+
+    encoding = save_circuit_plot(
+        () -> naive_encoding_circuit(code),
+        encoding_path,
+        code,
+        "`naive_encoding_circuit`",
+    )
+    naive_syndrome = save_circuit_plot(
+        () -> naive_syndrome_circuit(code)[1],
+        naive_syndrome_path,
+        code,
+        "`naive_syndrome_circuit`",
+    )
+    shor_syndrome = save_circuit_plot(
+        () -> begin
+            shor_parts = shor_syndrome_circuit(code)
+            vcat(shor_parts[1:2]...)
+        end,
+        shor_syndrome_path,
+        code,
+        "`shor_syndrome_circuit`";
+        max_table_cells=SHOR_MAX_TABLE_CELLS,
+    )
+
+    return (; encoding, naive_syndrome, shor_syndrome)
+end
+
+function plottable_logical_max(x, z)
+    xok = ispositivefinite(x)
+    zok = ispositivefinite(z)
+    xok && zok && return max(x, z)
+    xok && return x
+    zok && return z
+    return NaN
+end
+
+function padded_loglimits(values; default=(1e-5, 1.0), lower=nothing, upper=nothing, pad_decades_fraction=0.08)
+    vals = collect(skipzeronan(values))
+    isempty(vals) && return default
+
+    lo = Float64(minimum(vals))
+    hi = Float64(maximum(vals))
+    loglo = log10(lo)
+    loghi = log10(hi)
+    pad = loglo == loghi ? 0.5 : max((loghi - loglo) * pad_decades_fraction, 0.04)
+
+    lo = 10.0^(loglo - pad)
+    hi = 10.0^(loghi + pad)
+    !isnothing(lower) && (lo = max(lo, lower))
+    !isnothing(upper) && (hi = min(hi, upper))
+
+    if lo >= hi
+        center = (log10(lo) + log10(hi)) / 2
+        lo = 10.0^(center - 0.5)
+        hi = 10.0^(center + 0.5)
+        !isnothing(lower) && (lo = max(lo, lower))
+        !isnothing(upper) && (hi = min(hi, upper))
+    end
+
+    return lo, hi
+end
+
+function plotted_limit_values(phys_errors, results, single_error)
+    physical_values = Float64[]
+    logical_values = Float64[]
+
+    if single_error
+        for iᵉ in eachindex(phys_errors)
+            ispositivefinite(phys_errors[iᵉ]) || continue
+            for iᶜ in axes(results, 3), iᵈ in axes(results, 4), iˢ in axes(results, 5)
+                logical_error = plottable_logical_max(results[iᵉ, 1, iᶜ, iᵈ, iˢ], results[iᵉ, 2, iᶜ, iᵈ, iˢ])
+                ispositivefinite(logical_error) || continue
+                push!(physical_values, phys_errors[iᵉ])
+                push!(logical_values, logical_error)
+            end
+        end
+    else
+        for iᵉ in eachindex(phys_errors)
+            ispositivefinite(phys_errors[iᵉ]) || continue
+            for iˡ in axes(results, 2), iᶜ in axes(results, 3), iᵈ in axes(results, 4), iˢ in axes(results, 5)
+                logical_error = results[iᵉ, iˡ, iᶜ, iᵈ, iˢ]
+                ispositivefinite(logical_error) || continue
+                push!(physical_values, phys_errors[iᵉ])
+                push!(logical_values, logical_error)
+            end
+        end
+    end
+
+    return physical_values, logical_values
+end
+
+function dense_summary_layout(codelabels)
+    isempty(codelabels) && return false
+
+    label_lengths = length.(string.(codelabels))
+    return length(codelabels) > 8 ||
+        (length(codelabels) > 5 && maximum(label_lengths) > 30) ||
+        sum(label_lengths) > 260
+end
+
+function summary_palette(ncolors)
+    wong = Makie.wong_colors()
+    ncolors <= length(wong) && return wong
+    return Makie.categorical_colors(:tab20, ncolors)
+end
+
+legend_banks(nitems, max_banks) = max(1, min(max_banks, nitems))
+dense_code_legend_banks(nitems) = legend_banks(ceil(Int, nitems / 3), 4)
 
 function make_decoder_figure(phys_errors, results;
     title="",
-    colors=CircBuffer(Makie.wong_colors()),
+    colors=nothing,
     linestyles=CircBuffer([:solid, :dash, :dot, :dashdot, :dashdotdot, Linestyle([0.5, 1.0, 1.5, 2.5])]),
     markers=CircBuffer(['●', '■', '▲', '▼', '◆', '★']),
     single_error=false,
     codelabels=[], decoderlabels=[], setuplabels=[],
 )
-    minlim = minimum(phys_errors)
-    #minlim = min(minimum(phys_errors),minimum(skipzeronan(results)))
-    maxlim = min(1, max(maximum(Iterators.flatten((phys_errors,skipzeronan(results))))))
+    physical_values, logical_values = plotted_limit_values(phys_errors, results, single_error)
+    positive_phys_errors = collect(skipzeronan(phys_errors))
+    physical_default = isempty(positive_phys_errors) ? (1e-5, 1.0) : (minimum(positive_phys_errors), min(1.0, maximum(positive_phys_errors)))
+    xlimits = padded_loglimits(physical_values; default=physical_default, lower=physical_default[1], upper=1.0)
+    ylimits = padded_loglimits(logical_values; upper=1.0)
 
-    fresults = copy(results)
-    fresults[results.==0] .= NaN
+    fresults = plottable_log_rate.(results)
+    combined_results = map(plottable_logical_max, results[:,1,:,:,:], results[:,2,:,:,:])
 
-    f = Figure(size=(1000,600))
-    a = Axis(f[1:7,1:6],
+    dense_layout = dense_summary_layout(codelabels)
+    f = Figure(size=dense_layout ? (1500,900) : (1000,600))
+    a = Axis(dense_layout ? f[1,1:4] : f[1:7,1:6],
         xscale=log10, yscale=log10,
-        limits=(minlim,maxlim,minlim,maxlim),
-        aspect=DataAspect(),
+        limits=(xlimits[1], xlimits[2], ylimits[1], ylimits[2]),
         xlabel="physical error rate",
         ylabel="logical error rate",
         title=title,
-        titlesize=25,
-        xlabelsize=20,
-        ylabelsize=20,
-        xticklabelsize=15,
-        yticklabelsize=15,
+        titlesize=26,
+        xlabelsize=18,
+        ylabelsize=18,
+        xticklabelsize=13,
+        yticklabelsize=13,
+        xgridcolor=(:gray, 0.18),
+        ygridcolor=(:gray, 0.18),
+        xminorgridvisible=true,
+        yminorgridvisible=true,
+        xminorgridcolor=(:gray, 0.08),
+        yminorgridcolor=(:gray, 0.08),
+        topspinevisible=false,
+        rightspinevisible=false,
         )
 
     singlecode = size(results,3) == 1
+    ncolorseries = singlecode ? max(size(results,4), length(decoderlabels)) : max(size(results,3), length(codelabels))
+    colors = isnothing(colors) ? CircBuffer(summary_palette(ncolorseries)) : colors
     plotcolor(iᶜ,iᵈ) = singlecode ? colors[iᵈ] : colors[iᶜ]
     decoderlegendcolor(iᵈ) = singlecode ? colors[iᵈ] : :gray
+    markersize = dense_layout ? 7 : 9
+    linewidth = dense_layout ? 2.1 : 2.6
 
-    b = lines!(a, [minlim,maxlim],[minlim,maxlim], color=:black)
+    reflim = (max(xlimits[1], ylimits[1]), min(xlimits[2], ylimits[2]))
+    reflim[1] < reflim[2] && lines!(a, collect(reflim), collect(reflim), color=(:black, 0.75), linewidth=1.5)
     for (iᶜ,iᵈ,iˢ) in Iterators.product(axes.((fresults,), (3,4,5))...)
         if single_error
-            scatter!(a, phys_errors, max.(fresults[:,1,iᶜ,iᵈ,iˢ],fresults[:,2,iᶜ,iᵈ,iˢ]), marker=markers[iˢ], color=plotcolor(iᶜ,iᵈ), markersize=10)
-            lines!(  a, phys_errors, max.(fresults[:,1,iᶜ,iᵈ,iˢ],fresults[:,2,iᶜ,iᵈ,iˢ]), color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=3)
+            logical_error = combined_results[:,iᶜ,iᵈ,iˢ]
+            scatter!(a, phys_errors, logical_error, marker=markers[iˢ], color=plotcolor(iᶜ,iᵈ), markersize=markersize)
+            lines!(  a, phys_errors, logical_error, color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=linewidth)
         else
-            scatter!(a, phys_errors, fresults[:,1,iᶜ,iᵈ,iˢ], marker=:+, color=plotcolor(iᶜ,iᵈ), markersize=10)
-            scatter!(a, phys_errors, fresults[:,2,iᶜ,iᵈ,iˢ], marker=:x, color=plotcolor(iᶜ,iᵈ), markersize=10)
-            lines!(  a, phys_errors, fresults[:,1,iᶜ,iᵈ,iˢ], color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=3)
-            lines!(  a, phys_errors, fresults[:,2,iᶜ,iᵈ,iˢ], color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=3)
+            scatter!(a, phys_errors, fresults[:,1,iᶜ,iᵈ,iˢ], marker=:+, color=plotcolor(iᶜ,iᵈ), markersize=markersize)
+            scatter!(a, phys_errors, fresults[:,2,iᶜ,iᵈ,iˢ], marker=:x, color=plotcolor(iᶜ,iᵈ), markersize=markersize)
+            lines!(  a, phys_errors, fresults[:,1,iᶜ,iᵈ,iˢ], color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=linewidth)
+            lines!(  a, phys_errors, fresults[:,2,iᶜ,iᵈ,iˢ], color=plotcolor(iᶜ,iᵈ), linestyle=linestyles[iᵈ], linewidth=linewidth)
         end
     end
     ca = []
     for (iᶜ,label) in enumerate(codelabels)
-        push!(ca, lines!(a, [NaN], [NaN], color=plotcolor(iᶜ,1), label=label))
+        push!(ca, lines!(a, [NaN], [NaN], color=plotcolor(iᶜ,1), linewidth=linewidth, label=label))
     end
-    Legend(f[1:2,7],ca,codelabels, "Code", framevisible = false, halign=:left, titlehalign=:left, valign=:top, nbanks=2, titlesize=25, labelsize=20)
     la = []
     for (iᵈ,label) in enumerate(decoderlabels)
-        push!(la, lines!(a, [NaN], [NaN], linestyle=linestyles[iᵈ], color=decoderlegendcolor(iᵈ), label=label))
+        push!(la, lines!(a, [NaN], [NaN], linestyle=linestyles[iᵈ], color=decoderlegendcolor(iᵈ), linewidth=linewidth, label=label))
     end
-    Legend(f[3:6,7],la,decoderlabels, "Decoder", framevisible = false, halign=:left, titlehalign=:left, valign=:top, nbanks=1, titlesize=25, labelsize=20)
     ma = []
+    markerlegendlabels = String[]
+    markerlegendtitle = ""
     if single_error
         for (iˢ,label) in enumerate(setuplabels)
             push!(ma, scatter!(a, [NaN], [NaN], marker=markers[iˢ], color=:gray, label=label))
         end
-        Legend(f[7,7],ma,setuplabels, "Circuit Type", framevisible = false, halign=:left, titlehalign=:left, valign=:top, nbanks=2, titlesize=25, labelsize=20)
+        markerlegendlabels = string.(setuplabels)
+        markerlegendtitle = "Circuit Type"
     else
         push!(ma, scatter!(a, [NaN], [NaN], marker=:+, color=:gray, label="X"))
         push!(ma, scatter!(a, [NaN], [NaN], marker=:x, color=:gray, label="Z"))
-        Legend(f[7,7],ma,["X", "Z"], "Logical Error", framevisible = false, halign=:left, titlehalign=:left, valign=:top, nbanks=2, titlesize=25, labelsize=20)
+        markerlegendlabels = ["X", "Z"]
+        markerlegendtitle = "Logical Error"
+    end
+
+    if dense_layout
+        Legend(f[2,1:4], ca, codelabels, "Code", framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=dense_code_legend_banks(length(codelabels)), titlesize=24, labelsize=16)
+        Legend(f[3,1:2], la, decoderlabels, "Decoder", framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=legend_banks(length(decoderlabels), 3), titlesize=24, labelsize=16)
+        Legend(f[3,3:4], ma, markerlegendlabels, markerlegendtitle, framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=legend_banks(length(markerlegendlabels), 3), titlesize=24, labelsize=16)
+        rowsize!(f.layout, 1, Relative(0.62))
+        rowsize!(f.layout, 2, Auto())
+        rowsize!(f.layout, 3, Auto())
+        rowgap!(f.layout, 1, 16)
+        rowgap!(f.layout, 2, 10)
+        colgap!(f.layout, 24)
+    else
+        Legend(f[1:2,7], ca, codelabels, "Code", framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=2, titlesize=24, labelsize=18)
+        Legend(f[3:6,7], la, decoderlabels, "Decoder", framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=1, titlesize=24, labelsize=18)
+        Legend(f[7,7], ma, markerlegendlabels, markerlegendtitle, framevisible=false, halign=:left, titlehalign=:left, valign=:top, nbanks=2, titlesize=24, labelsize=18)
     end
     f
 end
@@ -143,24 +323,7 @@ function prep_figures(code_metadata)
             colgap!(f.layout, 1, Relative(0.15))
             save("codes/$(codetypename)/$(instancenameof(c)).png", f)
             # Plotting circuits
-            if code_n(c) <= 10
-                try
-                    savecircuit(naive_encoding_circuit(c), "codes/$(codetypename)/$(instancenameof(c))_encoding.png")
-                catch
-                    @error "$(c) failed to plot `naive_encoding_circuit`"
-                end
-                try
-                    savecircuit(naive_syndrome_circuit(c)[1], "codes/$(codetypename)/$(instancenameof(c))_naive_syndrome.png")
-                catch
-                    @error "$(c) failed to plot `naive_syndrome_circuit`"
-                end
-                try
-                    error("shor syndrome circuit plotting is problematic, fix it") #TODO
-                    savecircuit(vcat(shor_syndrome_circuit(c)[1:2]...), "codes/$(codetypename)/$(instancenameof(c))_shor_syndrome.png")
-                catch
-                    @error "$(c) failed to plot `shor_syndrome_circuit`"
-                end
-            end
+            prep_code_circuits(c, codetypename)
         end
     end
 end
