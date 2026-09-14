@@ -111,6 +111,60 @@ details h1, details h2, details h3 {
   text-align: center;
 }
 
+.code-filter-panel {
+  border: 1px solid var(--vlight-color);
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.code-search-label {
+  color: var(--vdark-color);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.code-search-input {
+  margin-bottom: 0.75rem;
+}
+
+.code-filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.code-filter-option {
+  align-items: center;
+  border: 1px solid var(--vlight-color);
+  border-radius: 4px;
+  color: var(--vdark-color);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.9rem;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+}
+
+.code-filter-option input {
+  margin: 0;
+}
+
+.code-filter-summary {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.75rem;
+}
+
+.code-card {
+  margin-bottom: 1.5rem;
+}
+
+.code-card-tags {
+  margin-bottom: 0.75rem;
+}
+
 .lighter {
   font-weight: 300;
   letter-spacing: 1px

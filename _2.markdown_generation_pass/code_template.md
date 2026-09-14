@@ -6,6 +6,8 @@ title = "The Code Family `{{:codetypename}}`"
 
 {{{:description}}}
 
+**Categories:** {{:tag_names}}
+
 ![summary of all evaluations that have been executed for this code family](./totalsummary.png)
 
 @@card
