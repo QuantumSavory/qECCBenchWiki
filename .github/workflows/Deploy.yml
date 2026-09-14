@@ -35,15 +35,16 @@ jobs:
     #   The steps below ensure that NodeJS and Franklin are loaded then it
     #   installs highlight.js which is needed for the prerendering step
     #   (code highlighting + katex prerendering).
-    #   Then the environment is activated and instantiated to install all
-    #   Julia packages which may be required to successfully build your site.
+    #   The repository environment is instantiated to install all Julia
+    #   packages which may be required to successfully build your site.
     #   The last line should be `optimize()` though you may want to give it
     #   specific arguments, see the documentation or ?optimize in the REPL.
-    - run: julia -e '
-            using Pkg; Pkg.add(["NodeJS", "Franklin"]);
+    # Load every package from the repository environment to keep transitive
+    # dependency versions consistent throughout the build.
+    - run: julia --project=. -e '
+            using Pkg; Pkg.instantiate();
             using NodeJS; run(`$(npm_cmd()) install highlight.js`);
             using Franklin;
-            Pkg.activate("."); Pkg.instantiate();
             include("wiki_database_passes.jl");
             prep_everything(CodeMetadata.code_metadata);
             optimize()'
