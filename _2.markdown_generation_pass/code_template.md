@@ -25,57 +25,62 @@ References
 Click on the &#9654; marker to expand
 @@
 
-{{#:family_strs}}
+{{#:family_entries}}
 
 ~~~
 <details>
 <summary>
 ~~~
-### {{:codetypename}}{{.}}
+### {{:codetypename}}{{:family_str}}
 ~~~
 </summary>
 ~~~
 
 #### Parity Check Tableau
 
-![the parity check tableau of the {{:codetypename}}{{.}} instance of this code family](./{{:codetypename}}{{.}}.png)
+![the parity check tableau of the {{:instance_name}} instance of this code family](./{{{:instance_name}}}.png)
 
+{{#:has_encoding}}
 #### Encoding Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_encoding_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_encoding_circuit)
 @@
 
-![the encoding circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_encoding.png)
+![the encoding circuit of the {{:instance_name}} instance of this code family](./{{{:instance_name}}}_encoding.png)
 
 <!-- TODO: Make QASM download for naive encoding circuit -->
+{{/:has_encoding}}
 
+{{#:has_naive_syndrome}}
 #### Naive Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.naive_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.naive_syndrome_circuit)
 @@
 
-![the naive syndrome extraction circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_naive_syndrome.png)
+![the naive syndrome extraction circuit of the {{:instance_name}} instance of this code family](./{{{:instance_name}}}_naive_syndrome.png)
 
 <!-- TODO: Make QASM download for naive syndrome circuit -->
+{{/:has_naive_syndrome}}
 
+{{#:has_shor_syndrome}}
 #### Shor Syndrome Extraction Circuit
 
 @@small
 can be generated with [`QuantumClifford.shor_syndrome_circuit`](https://quantumsavory.github.io/QuantumClifford.jl/dev/ECC_API/#QuantumClifford.ECC.shor_syndrome_circuit)
 @@
 
-<!-- ![the Shor syndrome extraction circuit of the {{:codetypename}}{{.}} instance of this code family](./{{{:codetypename}}}{{{.}}}_shor_syndrome.png) -->
-<!-- TODO: make the above work reliably and uncomment it -->
+![the Shor syndrome extraction circuit of the {{:instance_name}} instance of this code family](./{{{:instance_name}}}_shor_syndrome.png)
 
 <!-- TODO: Make QASM download for Shor syndrome circuit -->
+{{/:has_shor_syndrome}}
 
 ~~~
 </details>
 ~~~
 
-{{/:family_strs}}
+{{/:family_entries}}
 
 
 ## Performance of Specific Decoders
